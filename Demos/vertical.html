@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Tab demo</title>
+<style type="text/css">
+html {
+
+	font-family:Arial, Helvetica, sans-serif;
+	color: #333;
+	font-size:1.2em;
+}
+body {
+
+	font-size: 75%;
+	line-height:19px;
+}
+.hidden {
+
+	display:none;
+}
+.slide {
+	
+	width: 810px;
+	margin: 10px auto;
+}		
+.help {
+	font-size: 90%;
+	color: #111;
+	margin: 10px 0;
+}	
+a {
+
+	text-decoration: none;
+	color:#069;
+}
+img {
+
+	border: 0;
+}
+div.tabs {
+
+	text-align: center;
+}
+div.tabs a {
+
+	margin: 0 3px 0 0;
+}
+div.tabs a.selected {
+
+	text-decoration: underline;
+}
+
+/*
+
+*/
+#slide {
+
+	position: relative;
+	height: 610px;
+	width: 400px;
+	overflow: hidden;
+}
+#slide div {
+
+	position: relative;
+	display: inline-block;
+	width: 400px;
+	margin-top: 5px;
+}
+#slide span {
+
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 10px;
+	width: 380px;
+	color: #fff;
+	background: url(../Assets/images/grey.png);
+	background: rgba(0, 0, 0, .7)
+}
+</style>
+<script type="text/javascript" src="../mootools.js"></script>
+<script type="text/javascript" src="../PeriodicalExecuter.js"></script>
+
+<script type="text/javascript" src="../Source/Carousel.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+
+	window.addEvent('domready', function () {
+	
+		var duration = 300,
+		
+			links = $$('div.tabs a'),
+			
+			tab = new Carousel({
+				container: 'slide',
+				scroll: 2,
+				circular: true,
+				mode: 'vertical',
+				current: 3,
+				onChange: function (index) {
+				
+					links.each(function (el, off) {
+					
+						el[off == index ? 'addClass' : 'removeClass']('selected')
+					})
+				},
+				fx: {
+				
+					duration: duration
+				}
+			}),
+			
+			pe = new PeriodicalExecuter(function () {
+		
+				tab.move((tab.first() + 2) % 5)
+			}, duration / 1000 + 5);
+			
+			[links.shift(), links.pop()].map(function (el, index) {
+			
+				el.addEvent('click', function (e) {
+				
+					e.stop();
+					pe.stop();
+					
+					tab.move(tab.first() + (index == 0 ? -1 : 1) * tab.options.scroll);
+					
+					(function () { pe.registerCallback() }).delay(2 * duration)
+				})
+			});
+		
+		links.each(function (el, index) {
+		
+			return el.addEvent('click', function (e) {
+				
+				e.stop();
+				pe.stop();
+				
+				tab.move(index);
+				(function () { pe.registerCallback() }).delay(2 * duration)
+			})
+		})
+	})
+//]]></script>
+</head><body>
+<div class="slide">
+  <div id="slide">
+    <div><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide3.jpg" width="400" height="300" /></a><span>Caption 3: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide4.jpg" width="400" height="300" /></a><span>Caption 4: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide5.jpg" width="400" height="300" /></a><span>Caption 5: put anything you want in the caption. Note that there is a link in the image</span></div>
+  	  </div>
+      <div class="tabs"><a href="#page-p">&laquo;</a><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a><a href="#page-p">&raquo;</a></div>
+            
+      <div>Carousel demo.</div>
+      
+  <div>Feel free to use and/or modify.</div>  
+      <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
+</div>
+</body></html>
