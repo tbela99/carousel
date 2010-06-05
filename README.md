@@ -136,7 +136,7 @@ It is quite simple to use. what you need first is
 		//attach event to links
 		links.each(function (el, index) {
 		
-			return el.addEvent('click', function (e) {
+			el.addEvent('click', function (e) {
 				
 				e.stop();
 				pe.stop();
