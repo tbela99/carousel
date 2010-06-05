@@ -62,10 +62,10 @@ var Carousel = this.Carousel = new Class({
 			
 			$each({left: 'previous', right: 'next'}, function (val, key) {
 				
-				if(this.options[val]) $(this.options[val]).addEvent('click', function (e) {
+				if(this.options[key]) $(this.options[key]).addEvent('click', function (e) {
 				
 					e.stop();
-					this[key]()
+					this[val]()
 					
 				}.bind(this))
 				
