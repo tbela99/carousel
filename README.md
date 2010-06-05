@@ -150,7 +150,7 @@ It is quite simple to use. what you need first is
 ### Options:
 
 * container  - (*mixed*) the element that contains the panels.
-* circular: determines how the carousel behave when it reaches the bounds.
+* circular: determines how the carousel behaves when it reaches the bounds.
 * left - (*mixed*) element that moves carousel the the left when clicked.
 * right - (*mixed*) element that moves carousel the the right when clicked.
 * mode - (*string*, optional) the carousel mode. allowed values are *vertical* and *horizontal*
@@ -209,7 +209,7 @@ make an item visible. nothing will happen if the item is already visible.
 
 ### Arguments:
 
-1 - index - (*int*) index of the item to show
+1 - index - (*mixed*) index or item to show
 2 - direction - (*int*, optional) indicate the direction of the carousel movement: -1 will move from right to left and 1 will move in the opposite direction. this has no effect if the option circular is false.
 
 ### Returns:
@@ -230,7 +230,7 @@ return true if the item at *index* is visible.
 
 ### Arguments:
 
-- index - (*int*) index of the item.
+- index - (*mixed*) the item or its index in the items list.
 
 ### Returns:
 
