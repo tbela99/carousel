@@ -156,7 +156,7 @@ var Carousel = this.Carousel = new Class({
 		initialize: function (carousel) {
 		
 			var up = this.up = carousel.options.mode == 'vertical',
-				options = this.options = carousel.options
+				options = this.options = carousel.options,
 				elements = this.elements = carousel.elements.map(function (el) { 
 						
 					return el.setStyles({display: 'block', position: 'absolute'})
