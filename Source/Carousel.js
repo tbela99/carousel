@@ -163,9 +163,10 @@ var Carousel = this.Carousel = new Class({
 						
 				}),
 				parent = elements[0].getParent(),
-				pos = parent.setStyles({height: parent.offsetHeight, position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left')),
-				property = this.property = 'offset' + (up ? 'Top' : 'Left')
-				margin = this.margin = 'margin' + (up ? 'Top' : 'Left');
+				pos = parent.setStyles({height: parent.offsetHeight, position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
+				
+				this.property = 'offset' + (up ? 'Top' : 'Left');
+				this.margin = 'margin' + (up ? 'Top' : 'Left');
 			
 			this.reorder(0, 1).fx = new Fx.Elements(elements, options.fx)
 		},
