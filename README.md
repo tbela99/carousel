@@ -209,8 +209,8 @@ make an item visible. nothing will happen if the item is already visible.
 
 ### Arguments:
 
-1 - index - (*mixed*) index or item to show
-2 - direction - (*int*, optional) indicate the direction of the carousel movement: -1 will move from right to left and 1 will move in the opposite direction. this has no effect if the option circular is false.
+1. index - (*mixed*) index or item to show
+2. direction - (*int*, optional) indicate the direction of the carousel movement: -1 will move from right to left and 1 will move in the opposite direction. this has no effect if the option circular is false.
 
 ### Returns:
 
