@@ -151,8 +151,8 @@ It is quite simple to use. what you need first is
 
 * container  - (*mixed*) the element that contains the panels.
 * circular: determines how the carousel behaves when it reaches the bounds.
-* left - (*mixed*) element that moves carousel the the left when clicked.
-* right - (*mixed*) element that moves carousel the the right when clicked.
+* left - (*mixed*) element that moves carousel to the left when clicked.
+* right - (*mixed*) element that moves carousel to the right when clicked.
 * mode - (*string*, optional) the carousel mode. allowed values are *vertical* and *horizontal*
 * scroll - (*int*) the number of items visibles in the carousel, this must be set using css. the carousel will not attempt to resize the container to fit this number.
 * selector  - (*string*, optional) use only children that match this selector. useful when you have something else in your html like arrows to move the carousel.
