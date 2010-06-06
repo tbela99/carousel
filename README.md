@@ -85,7 +85,7 @@ It is quite simple to use. what you need first is
 				//the container
 				container: 'slide',
 				
-				//the number of items visibles
+				//the number of visible items
 				scroll: 2,
 				
 				//what to do when we reach the bounds
