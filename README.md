@@ -159,6 +159,7 @@ It is quite simple to use. what you need first is
 * animation  - (*string*, optional) the transition plugin to use for transition. default to *Move* (the only plugin at this time)
 * fx - (*object*, optional) parameters for the animation. this can be any of the Fx parameters.
 * current  - (*int*, optional) index of the first displayed item. default to 0.
+* distance - the number of images to cycle through each time next/previous are called .... defaults to 1.
 
 ### Events:
 
