@@ -43,7 +43,7 @@ Carousel.Extra = new Class({
 				
 						e.stop();
 						
-						if(this.running) this.stop().start.delay(this.options.interval + this.options.delay)
+						if(this.running) this.stop().start.delay(this.options.delay * 1000)
 						
 					}.bind(this))
 					
