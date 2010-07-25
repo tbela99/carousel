@@ -1,7 +1,7 @@
 Carousel
 ============
 
-Extensible mootools carousel 
+Extensible mootools carousel.
 
 [Demo](http://tbela99.github.com/carousel/Demos/horizontal.html)
 
@@ -13,7 +13,7 @@ Extensible mootools carousel
 How to use
 ---------------------
 
-It is quite simple to use. what you need first is 
+It is quite simple to use. a new class *Carousel.Extra* has been added. it allow you to make your carousel slide automatically. it has every Carousel options/properties plus some specific options which allow you to control the auto slide
 
 ### CSS:
 	/*
@@ -74,30 +74,18 @@ It is quite simple to use. what you need first is
 
 	window.addEvent('domready', function () {
 	
-			//duration of each transition
 		var duration = 300,
 		
-			//links to manually move the carousel
 			links = $$('div.tabs a'),
 			
-			//the carousel
-			tab = new Carousel({
-				//the container
+			tab = new Carousel.Extra({
 				container: 'slide',
-				
-				//the number of visible items
 				scroll: 2,
-				
-				//what to do when we reach the bounds
 				circular: true,
-				
-				//first diplayed item
 				current: 3,
-				
-				//carousel mode, default to horizontal
+				previous: links.shift(),
+				next: links.pop(),
 				/* mode: 'horizontal', */
-				
-				//onChange event handler, update links
 				onChange: function (index) {
 				
 					links.each(function (el, off) {
@@ -105,54 +93,29 @@ It is quite simple to use. what you need first is
 						el[off == index ? 'addClass' : 'removeClass']('selected')
 					})
 				},
-				
-				//custom transitions settings
 				fx: {
 				
 					duration: duration
 				}
-			}),
-			
-			//
-			pe = new PeriodicalExecuter(function () {
-		
-				tab.move((tab.first() + 2) % 5)
-			}, duration / 1000 + 5);
-			
-			//attach event to arrows
-			[links.shift(), links.pop()].map(function (el, index) {
-			
-				el.addEvent('click', function (e) {
-				
-					e.stop();
-					pe.stop();
-					
-					tab.move(tab.first() + (index == 0 ? -1 : 1) * tab.options.scroll);
-					
-					(function () { pe.registerCallback() }).delay(2 * duration)
-				})
 			});
-		
-		//attach event to links
+			
 		links.each(function (el, index) {
 		
 			el.addEvent('click', function (e) {
 				
 				e.stop();
-				pe.stop();
 				
 				tab.move(index);
-				(function () { pe.registerCallback() }).delay(2 * duration)
 			})
 		})
 	})
-
+	
 ### Options:
 
 * container  - (*mixed*) the element that contains the panels.
 * circular: determines how the carousel behaves when it reaches the bounds.
-* left - (*mixed*) element that moves carousel to the left when clicked.
-* right - (*mixed*) element that moves carousel to the right when clicked.
+* previous - (*mixed*) element that moves carousel to the left when clicked.
+* next - (*mixed*) element that moves carousel to the right when clicked.
 * mode - (*string*, optional) the carousel mode. allowed values are *vertical* and *horizontal*
 * scroll - (*int*) the number of items visible in the carousel, this must be set using css. the carousel will not attempt to resize the container to fit this number.
 * selector  - (*string*, optional) use only children that match this selector. useful when you have something else in your html like arrows to move the carousel.
@@ -160,6 +123,13 @@ It is quite simple to use. what you need first is
 * fx - (*object*, optional) parameters for the animation. this can be any of the Fx parameters.
 * current  - (*int*, optional) index of the first displayed item. default to 0.
 * distance - the number of images to cycle through each time next/previous are called .... defaults to 1.
+
+### Carousel.Extra Options:
+these options are specific to Carousel.Extra
+
+* interval  - (*int*) interval between 2 executions in seconds.
+* delay - (*int*) delay between the moment the next/previous button is clicked and the auto slide is restarted.
+* reverse - (*boolean*) run the carousel in reverse order if true.
 
 ### Events:
 
@@ -236,3 +206,21 @@ return true if the item at *index* is visible.
 ### Returns:
 
 * (*boolean*)
+
+Carousel.Extra Method: start
+------------------------
+
+starts the automatic slide.
+
+### Returns:
+
+* (*object*) this Carousel instance
+
+Method: stop
+------------------------
+
+stop the automatic slide.
+
+### Returns:
+
+* (*object*) this Carousel instance

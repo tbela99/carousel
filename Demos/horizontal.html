@@ -85,6 +85,7 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Carousel.js"></script>
+<script type="text/javascript" src="../Source/Carousel.Extra.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -95,11 +96,13 @@ div.tabs a.selected {
 		
 			links = $$('div.tabs a'),
 			
-			tab = new Carousel({
+			tab = new Carousel.Extra({
 				container: 'slide',
 				scroll: 2,
 				circular: true,
 				current: 3,
+				previous: links.shift(),
+				next: links.pop(),
 				/* mode: 'horizontal', */
 				onChange: function (index) {
 				
@@ -112,35 +115,15 @@ div.tabs a.selected {
 				
 					duration: duration
 				}
-			}),
-			
-			pe = new PeriodicalExecuter(function () {
-		
-				tab.move((tab.first() + 2) % 5)
-			}, duration / 1000 + 5);
-			
-			[links.shift(), links.pop()].map(function (el, index) {
-			
-				el.addEvent('click', function (e) {
-				
-					e.stop();
-					pe.stop();
-					
-					tab.move(tab.first() + (index == 0 ? -1 : 1) * tab.options.scroll);
-					
-					(function () { pe.registerCallback() }).delay(2 * duration)
-				})
 			});
-		
+			
 		links.each(function (el, index) {
 		
 			el.addEvent('click', function (e) {
 				
 				e.stop();
-				pe.stop();
 				
 				tab.move(index);
-				(function () { pe.registerCallback() }).delay(2 * duration)
 			})
 		})
 	})

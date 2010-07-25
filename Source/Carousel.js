@@ -36,14 +36,15 @@ var Carousel = this.Carousel = new Class({
 			onChange: function (index) {
 			
 			},
-			left: element1,
-			right: element2,
+			previous: element1,
+			next: element2,
 			container: null,
 			selector: '',
 		*/
 			mode: 'horizontal',
 			animation: 'Move',
 			scroll: 4,
+			distance: 1,
 			fx: {
 			
 				link: 'cancel',
@@ -60,9 +61,9 @@ var Carousel = this.Carousel = new Class({
 				
 			}.bind(this)).setOptions(options);
 			
-			$each({left: 'previous', right: 'next'}, function (val, key) {
+			['previous', 'next'].each(function (val) {
 				
-				if(this.options[key]) $(this.options[key]).addEvent('click', function (e) {
+				if($(this.options[val])) $(this.options[val]).addEvent('click', function (e) {
 				
 					e.stop();
 					this[val]()
@@ -104,12 +105,12 @@ var Carousel = this.Carousel = new Class({
 		
 		previous: function (direction) {
 	
-			return this.move(this.current - this.options.scroll, direction)
+			return this.move(this.current - this.options.distance, direction)
 		},
 		
 		next: function (direction) {
 		
-			return this.move(this.current + this.options.scroll, direction)
+			return this.move(this.current + this.options.distance, direction)
 		},
 		
 		move: function (index, direction) {
@@ -121,7 +122,7 @@ var Carousel = this.Carousel = new Class({
 			
 			if($type($(index)) == 'element') index = elements.indexOf($(index));
 			
-			if(this.isVisible(index)) return this;
+			//if(this.isVisible(index)) return this;
 			
 			if(!this.options.circular) {
 		
@@ -238,7 +239,7 @@ var Carousel = this.Carousel = new Class({
 				obj[index] = up ? {top: el[property] - offset} : {left: el[property] - offset}
 			});
 			
-			this.fx.start(obj).chain(function () { carousel.fireEvent('change', current) })
+			this.fx.cancel().start(obj).chain(function () { carousel.fireEvent('change', current) })
 		}
 	})
 })();
