@@ -169,7 +169,7 @@ var Carousel = this.Carousel = new Class({
 			});
 			
 			this.property = 'offset' + (up ? 'Top' : 'Left');
-			this.margin = 'margin' + (up ? 'Top' : 'Left');
+			this.margin = up ? ['marginTop', 'marginBottom'] : ['marginLeft', 'marginRight'];
 		
 			this.reorder(0, 1).fx = new Fx.Elements(elements, options.fx)
 		},
@@ -178,27 +178,30 @@ var Carousel = this.Carousel = new Class({
 		
 			var options = this.options,
 				panels = this.elements,
+				panel,
+				prev,
 				ini = pos = style(panels[0].getParent(), 'padding' + (this.up ? 'Top' : 'Left')),
 				i,
 				index,
 				length = panels.length,
 				horizontal = options.mode == 'horizontal',
 				side = horizontal ? 'offsetWidth' : 'offsetHeight';
-						
+								
 			//rtl
 			if(direction == -1) {
 			
 				for(i = length; i > options.scroll - 1; i--) {
 			
 					index = (i + offset + length) % length;
+					prev = panel;
 					panel = panels[index];
 					
 					if(horizontal) panel.setStyle('left', pos);
 					else panel.setStyles({left: 0, top: pos});
-					pos -= (panel[side] + style(panel, this.margin));
+					pos -= (panel[side] + style(panel, this.margin[0]));
 				}
 				
-				pos = ini + panel[side] + style(panel, this.margin);
+				pos = ini + panel[side] + style(panel, this.margin[0]);
 				
 				for(i = 1; i < options.scroll; i++) {
 			
@@ -208,18 +211,21 @@ var Carousel = this.Carousel = new Class({
 					
 					if(horizontal) panel.setStyle('left', pos);
 					else panel.setStyles({left: 0, top: pos});
-					pos += panel[side] + style(panel, this.margin);
+					pos += panel[side] + style(panel, this.margin[0]);
+					if(prev) pos += style(prev, this.margin[1]);
 				}
 				
 				//ltr
 			} else if(direction == 1) for(i = 0; i < length; i++) {
 			
 				index = (i + offset + length) % length;
+					prev = panel;
 				panel = panels[index];				
 				
 				if(horizontal) panel.setStyle('left', pos);
 				else panel.setStyles({left: 0, top: pos});
-				pos += panel[side] + style(panel, this.margin);
+				pos += panel[side] + style(panel, this.margin[0]);
+				if(prev) pos += style(prev, this.margin[1]);
 			}
 			
 			return this
