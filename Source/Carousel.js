@@ -158,17 +158,19 @@ var Carousel = this.Carousel = new Class({
 		
 			var up = this.up = carousel.options.mode == 'vertical',
 				options = this.options = carousel.options,
-				elements = this.elements = carousel.elements.map(function (el) { 
-						
-					return el.setStyles({display: 'block', position: 'absolute'})
-						
-				}),
-				parent = elements[0].getParent(),
-				pos = parent.setStyles({height: parent.offsetHeight, position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
+				parent = carousel.elements[0].getParent(),
+				elements = this.elements = carousel.elements;
 				
-				this.property = 'offset' + (up ? 'Top' : 'Left');
-				this.margin = 'margin' + (up ? 'Top' : 'Left');
+			parent.setStyles({height: parent.offsetHeight, position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
+			elements.each(function (el) { 
+					
+				el.setStyles({display: 'block', position: 'absolute'})
+					
+			});
 			
+			this.property = 'offset' + (up ? 'Top' : 'Left');
+			this.margin = 'margin' + (up ? 'Top' : 'Left');
+		
 			this.reorder(0, 1).fx = new Fx.Elements(elements, options.fx)
 		},
 		

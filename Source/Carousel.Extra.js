@@ -1,6 +1,6 @@
 /*
 ---
-script: Carousel.js
+script: Carousel.Extra.js
 license: MIT-style license.
 description: Tab.Extra - Autosliding carousel.
 copyright: Copyright (c) 2010 Thierry Bela
