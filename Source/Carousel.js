@@ -190,7 +190,7 @@ var Carousel = this.Carousel = new Class({
 			//rtl
 			if(direction == -1) {
 			
-				for(i = length; i > options.scroll - 1; i--) {
+				for(i = length;; i > options.scroll - 1 && i--) {
 			
 					index = (i + offset + length) % length;
 					prev = panel;
@@ -198,7 +198,8 @@ var Carousel = this.Carousel = new Class({
 					
 					if(horizontal) panel.setStyle('left', pos);
 					else panel.setStyles({left: 0, top: pos});
-					pos -= (panel[side] + style(panel, this.margin[0]));
+					pos -= (panel[side] + style(panel, this.margin[1]));
+					if(prev) pos -= style(prev, this.margin[0]);
 				}
 				
 				pos = ini + panel[side] + style(panel, this.margin[0]);
@@ -207,12 +208,13 @@ var Carousel = this.Carousel = new Class({
 			
 					index = (i + offset + length) % length;
 					
+					prev = panel;
 					panel = panels[index];
 					
 					if(horizontal) panel.setStyle('left', pos);
 					else panel.setStyles({left: 0, top: pos});
 					pos += panel[side] + style(panel, this.margin[0]);
-					if(prev) pos += style(prev, this.margin[1]);
+					if(prev) pos += style(prev, this.margin[1])					
 				}
 				
 				//ltr
