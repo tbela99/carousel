@@ -122,8 +122,6 @@ var Carousel = this.Carousel = new Class({
 			
 			if($type($(index)) == 'element') index = elements.indexOf($(index));
 			
-			//if(this.isVisible(index)) return this;
-			
 			if(!this.options.circular) {
 		
 				if(index > length - scroll) index = length - scroll

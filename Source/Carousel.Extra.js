@@ -26,28 +26,27 @@ Carousel.Extra = new Class({
 				interval: 10, //interval between 2 executions in seconds
 				delay: 10, //delay between the moment a tab is clicked and the auto slide is restarted
 				reverse: true //move backward
-			},
-			reverse: false, //move direction
-		*/
+			
+			*/
 		
 			Extends: Carousel,
 			Binds: ['update', 'start', 'stop'],
 			initialize: function(options) {
 
 				this.parent($merge({interval: 10, delay: 10}, options));
-
+				var self = this;
+				
 				//handle click on tab. wait 10 seconds before we go
 				['previous', 'next'].each(function (val) {
 				
-					if($(this.options[val])) $(this.options[val]).addEvent('click', function (e) {
+					if($(self.options[val])) $(self.options[val]).addEvent('click', function (e) {
 				
 						e.stop();
 						
-						if(this.running) this.stop().start.delay(this.options.delay * 1000)
+						if(self.running) self.stop().start.delay(self.options.delay * 1000)
 						
-					}.bind(this))
-					
-				}, this);
+					})
+				});
 			
 				this.reverse = !!this.options.reverse;
 				this.running = false;
@@ -56,7 +55,7 @@ Carousel.Extra = new Class({
 				return this
 			},
 			
-			update: function () { return this[this.reverse ? 'previous' : 'next']() },
+			update: function () { return this[this.options.reverse ? 'previous' : 'next']() },
 			
 			start: function () {
 			
