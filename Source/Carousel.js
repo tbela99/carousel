@@ -161,7 +161,7 @@ var Carousel = this.Carousel = new Class({
 				parent = carousel.elements[0].getParent(),
 				elements = this.elements = carousel.elements;
 				
-			parent.setStyles({height: parent.offsetHeight, position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
+			parent.setStyles({height: parent.getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
 			elements.each(function (el) { 
 					
 				el.setStyles({display: 'block', position: 'absolute'})
@@ -170,6 +170,8 @@ var Carousel = this.Carousel = new Class({
 			
 			this.property = 'offset' + (up ? 'Top' : 'Left');
 			this.margin = up ? ['marginTop', 'marginBottom'] : ['marginLeft', 'marginRight'];
+			this.padding = style(parent, up ? 'paddingTop' : 'paddingLeft');
+			this.pad = style(parent, 'paddingLeft');
 		
 			this.reorder(0, 1).fx = new Fx.Elements(elements, options.fx)
 		},
@@ -180,7 +182,8 @@ var Carousel = this.Carousel = new Class({
 				panels = this.elements,
 				panel,
 				prev,
-				ini = pos = style(panels[0].getParent(), 'padding' + (this.up ? 'Top' : 'Left')),
+				ini = pos = this.padding,
+				pad = this.pad,
 				i,
 				index,
 				length = panels.length,
@@ -190,16 +193,17 @@ var Carousel = this.Carousel = new Class({
 			//rtl
 			if(direction == -1) {
 			
-				for(i = length;; i > options.scroll - 1 && i--) {
+				for(i = length; i > options.scroll - 1; i--) {
 			
 					index = (i + offset + length) % length;
 					prev = panel;
 					panel = panels[index];
 					
-					if(horizontal) panel.setStyle('left', pos);
-					else panel.setStyles({left: 0, top: pos});
-					pos -= (panel[side] + style(panel, this.margin[1]));
 					if(prev) pos -= style(prev, this.margin[0]);
+					
+					if(horizontal) panel.setStyle('left', pos);
+					else panel.setStyles({left: pad, top: pos});
+					pos -= (panel[side] + style(panel, this.margin[1]));
 				}
 				
 				pos = ini + panel[side] + style(panel, this.margin[0]);
@@ -209,23 +213,23 @@ var Carousel = this.Carousel = new Class({
 					index = (i + offset + length) % length;
 					
 					prev = panel;
-					panel = panels[index];
+					panel = panels[index];			
 					
+					if(prev) pos += style(prev, this.margin[1]);
 					if(horizontal) panel.setStyle('left', pos);
-					else panel.setStyles({left: 0, top: pos});
-					pos += panel[side] + style(panel, this.margin[0]);
-					if(prev) pos += style(prev, this.margin[1])					
+					else panel.setStyles({left: pad, top: pos});
+					pos += panel[side] + style(panel, this.margin[0]);		
 				}
 				
 				//ltr
 			} else if(direction == 1) for(i = 0; i < length; i++) {
 			
 				index = (i + offset + length) % length;
-					prev = panel;
+				prev = panel;
 				panel = panels[index];				
 				
 				if(horizontal) panel.setStyle('left', pos);
-				else panel.setStyles({left: 0, top: pos});
+				else panel.setStyles({left: pad, top: pos});
 				pos += panel[side] + style(panel, this.margin[0]);
 				if(prev) pos += style(prev, this.margin[1]);
 			}
@@ -242,7 +246,7 @@ var Carousel = this.Carousel = new Class({
 		
 			if(this.options.circular) this.reorder(carousel.current, direction);
 			
-			offset = carousel.elements[current][property];
+			offset = carousel.elements[current][property] - this.padding;
 			
 			carousel.elements.each(function (el, index) {
 			
