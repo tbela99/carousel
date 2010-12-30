@@ -41,6 +41,7 @@ var Carousel = this.Carousel = new Class({
 			container: null,
 			selector: '',
 		*/
+			link: 'cancel',
 			mode: 'horizontal',
 			animation: 'Move',
 			scroll: 4,
@@ -129,8 +130,8 @@ var Carousel = this.Carousel = new Class({
 				
 			else {
 			
-				if(index < 0) index += length
-				index %= Math.max(length, 1);
+				if(index < 0) index += length;
+				index %= Math.max(length, 1)
 			}			
 		
 			if(index < 0 || length <= scroll || index >= length) return this;
@@ -156,10 +157,10 @@ var Carousel = this.Carousel = new Class({
 		
 			var up = this.up = carousel.options.mode == 'vertical',
 				options = this.options = carousel.options,
-				parent = carousel.elements[0].getParent(),
-				elements = this.elements = carousel.elements;
+				elements = this.elements = carousel.elements,
+				parent = elements[0].getParent();
 				
-			parent.setStyles({height: parent.getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
+			parent.setStyles({height: elements[0].setStyle('display', 'block').getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
 			elements.each(function (el) { 
 					
 				el.setStyles({display: 'block', position: 'absolute'})
@@ -171,7 +172,7 @@ var Carousel = this.Carousel = new Class({
 			this.padding = style(parent, up ? 'paddingTop' : 'paddingLeft');
 			this.pad = style(parent, 'paddingLeft');
 		
-			this.reorder(0, 1).fx = new Fx.Elements(elements, options.fx)
+			this.reorder(0, 1).fx = new Fx.Elements(elements, options.fx).addEvents({onStart: function () { carousel.active = true }, onComplete: function () { carousel.active = false }})
 		},
 		
 		reorder: function (offset, direction) {
