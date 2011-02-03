@@ -19,56 +19,57 @@ provides: [Carousel]
 
 Carousel.Extra = new Class({
 
-		/*
+	/*
+	
+		options: {
 		
-			options: {
-			
-				interval: 10, //interval between 2 executions in seconds
-				delay: 10, //delay between the moment a tab is clicked and the auto slide is restarted
-				reverse: true //move backward
-			
-			*/
-		
-			Extends: Carousel,
-			Binds: ['update', 'start', 'stop'],
-			initialize: function(options) {
+			interval: 10, //interval between 2 executions in seconds
+			delay: 10, //delay between the moment a tab is clicked and the auto slide is restarted
+			reverse: true //move backward
+			autostart: true,
+		},
+		*/
+	
+		Extends: Carousel,
+		Binds: ['update', 'start', 'stop'],
+		initialize: function(options) {
 
-				this.parent($merge({interval: 10, delay: 10}, options));
-				var self = this;
-				
-				//handle click on tab. wait 10 seconds before we go
-				['previous', 'next'].each(function (val) {
-				
-					if($(self.options[val])) $(self.options[val]).addEvent('click', function (e) {
-				
-						e.stop();
-						
-						if(self.running) self.stop().start.delay(self.options.delay * 1000)
-						
-					})
-				});
+			this.parent(Object.merge({interval: 10, delay: 10, autostart: true}, options));
+			var self = this;
 			
-				this.reverse = !!this.options.reverse;
-				this.running = false;
-				this.timer = new PeriodicalExecuter(this.update, this.options.interval);
-				
-				return this
-			},
+			//handle click on tab. wait 10 seconds before we go
+			['previous', 'next'].each(function (fn) {
 			
-			update: function () { return this[this.options.reverse ? 'previous' : 'next']() },
+				if($(self.options[fn])) $(self.options[fn]).addEvent('click', function (e) {
 			
-			start: function () {
+					e.stop();
+					
+					if(self.active) self.stop().start.delay(self.options.delay * 1000)
+				})
+			});
+		
+			this.reverse = !!this.options.reverse;
+			this.timer = new PeriodicalExecuter(this.update, this.options.interval);
 			
-				this.timer.registerCallback();
-				this.running = true;
-				return this
-			},
+			if(!this.options.autostart) this.timer.stop();
 			
-			stop: function() { 
-			
-				this.timer.stop();
-				this.running = false;
-				return this
-			}
-		});
+			return this
+		},
+		
+		update: function () { return this[this.options.reverse ? 'previous' : 'next']() },
+		
+		start: function () {
+		
+			this.timer.registerCallback();
+			this.active = true;
+			return this
+		},
+		
+		stop: function() { 
+		
+			this.timer.stop();
+			this.active = false;
+			return this
+		}
+	});
 		

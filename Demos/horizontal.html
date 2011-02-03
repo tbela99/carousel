@@ -1,7 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
-
-
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Carousel demo</title>
 <style type="text/css">
@@ -96,9 +94,12 @@ div.tabs a.selected {
 	
 		var duration = 300,
 		
-			links = $$('div.tabs a'),
+			links = $$('div.tabs a:first-child,div.tabs a:last-child'),
 			
-			tab = new Carousel.Extra({
+			carousel = new Carousel.Extra({
+				activeClass: 'selected',
+				autostart: false,
+				tabs: 'div.tabs a:not(:first-child):not(:last-child)',
 				container: 'slide',
 				scroll: 2,
 				circular: true,
@@ -106,42 +107,81 @@ div.tabs a.selected {
 				previous: links.shift(),
 				next: links.pop(),
 				/* mode: 'horizontal', */
-				onChange: function (index) {
-				
-					links.each(function (el, off) {
-					
-						el[off == index ? 'addClass' : 'removeClass']('selected')
-					})
-				},
 				fx: {
 				
 					duration: duration
 				}
-			});
+			}),
+			removed = 0;
 			
-		links.each(function (el, index) {
+		function change() {
 		
-			el.addEvent('click', function (e) {
+			var panel = this.retrieve('panel');
+			
+			if(this.checked) {
 				
-				e.stop();
+				if(!panel) {
 				
-				tab.move(index);
-			})
-		})
+					if(carousel.running) {
+					
+						carousel.addEvent('complete:once', change.bind(this));
+						return
+					}
+					
+					panel = carousel.remove(Math.max(0, this.value - removed));
+					
+					if(panel) {
+					
+						this.store('panel', panel);
+						removed++;
+					}
+					
+					this.checked = !!panel
+				}
+				
+			} else {
+			
+				if(panel) {
+				
+					this.eliminate('panel');
+					removed--;
+					carousel.add(panel.panel, panel.tab, this.value)
+				}
+			}
+		}
+		
+		$$('input.remove').addEvents({click: change, change: change})
 	})
 //]]></script>
 </head><body>
 <div class="slide">
-  <div id="slide">
-    <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
+ <div id="slide">
+		<div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide3.jpg" width="400" height="300" /></a><span>Caption 3: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide4.jpg" width="400" height="300" /></a><span>Caption 4: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide5.jpg" width="400" height="300" /></a><span>Caption 5: put anything you want in the caption. Note that there is a link in the image</span></div>
-  	  </div>
-      <div class="tabs"><a href="#page-p">&laquo;</a><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a><a href="#page-p">&raquo;</a></div>
-            
-      <div>Carousel demo.</div>
+        <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide6.jpg" width="400" height="300" /></a><span>Caption 6: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide7.jpg" width="400" height="300" /></a><span>Caption 7: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide8.jpg" width="400" height="300" /></a><span>Caption 8: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide9.jpg" width="400" height="300" /></a><span>Caption 9: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide10.jpg" width="400" height="300" /></a><span>Caption 10: put anything you want in the caption. Note that there is a link in the image</span></div>
+  </div>
+  <div class="tabs"><a href="#page-p">&laquo;</a><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a><a href="#5">6</a><a href="#6">7</a><a href="#7">8</a><a href="#8">9</a><a href="#9">10</a><a href="#page-p">&raquo;</a></div>
+	
+	<div>Carousel demo.</div>
+	<form action="">
+		<div>remove panel: <label for="remove0">1</label><input id="remove0" class="remove" type="checkbox" value="0" />
+		<label for="remove1">2</label><input id="remove1" class="remove" type="checkbox" value="1" /> 
+		<label for="remove2">3</label><input id="remove2" class="remove" type="checkbox" value="2" />
+		<label for="remove3">4</label><input id="remove3" class="remove" type="checkbox" value="3" />
+		<label for="remove4">5</label><input id="remove4" class="remove" type="checkbox" value="4" />
+		<label for="remove5">6</label><input id="remove5" class="remove" type="checkbox" value="5" />
+		<label for="remove6">7</label><input id="remove6" class="remove" type="checkbox" value="6" />
+		<label for="remove7">8</label><input id="remove7" class="remove" type="checkbox" value="7" />
+		<label for="remove8">9</label><input id="remove8" class="remove" type="checkbox" value="8" />
+		<label for="remove9">10</label><input id="remove9" class="remove" type="checkbox" value="9" />
+	</form>
       
   <div>Feel free to use and/or modify.</div>  
       <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>

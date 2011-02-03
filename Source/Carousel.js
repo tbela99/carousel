@@ -17,7 +17,7 @@ provides: [Carousel]
 ...
 */
 
-(function () {
+(function ($) {
 
 function style(el, style) {
 
@@ -40,6 +40,9 @@ var Carousel = this.Carousel = new Class({
 			next: element2,
 			container: null,
 			selector: '',
+			tabs: [],
+			activeClass: '',
+			inactiveClass: '',
 		*/
 			link: 'cancel',
 			mode: 'horizontal',
@@ -53,75 +56,164 @@ var Carousel = this.Carousel = new Class({
 				duration: 500
 			}
 		},
+		current: 0,
 		plugins: {},
 		initialize: function (options) {
 		
-			this.addEvent('change', function (current) {
-			
-				this.current = current
+			this.addEvents({
+				change: function (current, selected) { 
 				
-			}.bind(this)).setOptions(options);
+					if(this.tabs[this.current]) this.tabs[this.current].addClass(this.options.inactiveClass).removeClass(this.options.activeClass)
+					if(this.tabs[current]) this.tabs[current].addClass(this.options.activeClass).removeClass(this.options.inactiveClass);
+					
+					this.current = current;
+					this.selected = selected
+				},
+				complete: function () { this.running = false }
+			}).setOptions(options);
 			
-			['previous', 'next'].each(function (val) {
+			['previous', 'next'].each(function (fn) {
 				
-				if($(this.options[val])) $(this.options[val]).addEvent('click', function (e) {
+				if($(this.options[fn])) $(this.options[fn]).addEvent('click', function (e) {
 				
 					e.stop();
-					this[val]()
+					this[fn]()
 					
 				}.bind(this))
 				
 			}, this);
 			
+			var current = options.current || 0,
+				events = this.events = {
+
+						click: function(e) {
+
+							e.stop();
+
+							var target = e.event.target,
+								index = this.tabs.indexOf(target);
+
+							while(target && index == -1) {
+
+								target = target.parentNode;
+								index = this.tabs.indexOf(target)
+							}
+							
+							if(index == -1) return;
+							
+							this.move(index)
+
+						}.bind(this)
+					};
+					
+			this.tabs = $$(options.tabs).addEvents(events);
 			this.elements = $(options.container).getChildren(options.selector);
 			
-			this.current = 0;
-			this.anim = new this.plugins[this.options.animation](this);
+			this.anim = new this.plugins[this.options.animation](this.elements, this.options).addEvents({change: function () { this.fireEvent('change', arguments) }.bind(this), complete: function () { this.fireEvent('complete', arguments) }.bind(this)});
 			
-			this.move(this.options.current || 0);
+			this.move(current || 0);
 		},
 		
 		isVisible: function (index) {
 		
-			if($type($(index)) == 'element') index = this.elements.indexOf($(index));
+			if(typeOf($(index)) == 'element') index = this.elements.indexOf($(index));
 			
 			var length = this.elements.length,
 				current = this.current,
 				scroll = this.options.scroll;
 			
 			if(current <= index && index < current + scroll) return true;
-			
-			if(this.options.circular) for(var i = 1; i < scroll; i++) {
-			
-				if((i + current)  % length == index) return true;
-			}
+			if(this.options.circular)  while(scroll && --scroll) if((scroll + current)  % length == index) return true;
 			
 			return false
 		},
 		
-		first: function () {
+		first: function () { return this.current },
 		
-			return this.current
-		},
+		previous: function (direction) { return this.move(this.current - this.options.distance, direction) },
 		
-		previous: function (direction) {
+		next: function (direction) { return this.move(this.current + this.options.distance, direction) },
 	
-			return this.move(this.current - this.options.distance, direction)
+		add: function (panel, tab, index) {
+
+			panel = $(panel);
+			tab = $(tab);
+
+			if(tab) tab.addEvents(this.events);
+
+			if(this.elements.indexOf(panel) != -1) return this;
+
+			if(index == undefined) index = this.elements.length;
+			index = Math.min(index, this.elements.length);
+			
+			switch(index) {
+
+				case 0 :
+						if(this.elements.length > 0) {
+
+							this.elements.unshift(panel.inject(this.elements[0], 'before'));
+							if(tab) this.tabs.unshift(tab.inject(this.tabs[0], 'before'));
+						}
+
+						break;
+				default:
+						this.elements.splice(index, 0, panel.inject(this.elements[index - 1], 'after'));
+						if(tab) this.tabs.splice(index, 0, tab.inject(this.tabs[index - 1], 'after'));
+						break;
+			}
+			
+			if(this.anim.add) this.anim.add(panel);
+			this.current = this.elements.indexOf(this.selected);
+
+			return this
 		},
-		
-		next: function (direction) {
-		
-			return this.move(this.current + this.options.distance, direction)
+
+		remove: function (index) {
+
+			var panel = this.elements[index],
+				tab = this.tabs[index];
+				
+			//
+			if(this.running || panel == undefined || panel == this.selected) return null;
+
+			this.elements.splice(index, 1);
+			panel.dispose();
+
+			if(this.anim.remove) this.anim.remove(panel, index);
+
+			if(tab) {
+
+				tab.removeEvents(this.events).dispose();
+				this.tabs.splice(index, 1);
+			}
+
+			this.current = this.elements.indexOf(this.selected);
+
+			return {panel: panel, tab: tab}
 		},
-		
+
 		move: function (index, direction) {
 		
+			if(this.running) {
+			
+				switch(this.options.link) {
+				
+					case 'cancel':
+								this.anim.cancel();
+								break;
+					case 'chain':
+								break;
+					case 'ignore':
+							return this;
+				}
+			}
+			
 			var elements = this.elements,
 				current = this.current,
 				length = elements.length,
 				scroll = this.options.scroll;
 			
-			if($type($(index)) == 'element') index = elements.indexOf($(index));
+			if(typeOf($(index)) == 'element') index = elements.indexOf(index);
 			
 			if(!this.options.circular) {
 		
@@ -143,37 +235,50 @@ var Carousel = this.Carousel = new Class({
 					backward = current > index ? current - index : current + elements.length - index;
 				
 				direction = Math.abs(forward) <= Math.abs(backward) ? 1 : -1
-			}			
-			
-			this.anim.move(this, index, direction);
-			
+			}	
+
+			this.anim.move(index, direction);
 			return this
 		}
 	});
 	
 	Carousel.prototype.plugins.Move = new Class({
 	
-		initialize: function (carousel) {
+		Implements: [Events],
+		initialize: function (elements, options) {
 		
-			var up = this.up = carousel.options.mode == 'vertical',
-				options = this.options = carousel.options,
-				elements = this.elements = carousel.elements,
+			var up = this.up = options.mode == 'vertical',
 				parent = elements[0].getParent();
 				
 			parent.setStyles({height: elements[0].setStyle('display', 'block').getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
-			elements.each(function (el) { 
-					
-				el.setStyles({display: 'block', position: 'absolute'})
-					
-			});
+			elements.each(function (el) { el.setStyles({display: 'block', position: 'absolute'}) });
 			
+			this.options = options;
+			this.elements = elements;
 			this.property = 'offset' + (up ? 'Top' : 'Left');
 			this.margin = up ? ['marginTop', 'marginBottom'] : ['marginLeft', 'marginRight'];
 			this.padding = style(parent, up ? 'paddingTop' : 'paddingLeft');
 			this.pad = style(parent, 'paddingLeft');
 		
-			this.reorder(0, 1).fx = new Fx.Elements(elements, options.fx).addEvents({onStart: function () { carousel.active = true }, onComplete: function () { carousel.active = false }})
+			this.direction = 1;
+			this.current = elements[0];
+			this.reset()
 		},
+		
+		cancel: function () { this.fx.cancel() },
+		
+		reset: function () {
+		
+			//
+			this.fx = new Fx.Elements(this.elements, this.options.fx).addEvents({complete: function () { this.fireEvent('complete', [this.elements.indexOf(this.current), this.current]) }.bind(this)})			
+			this.reorder(this.elements.indexOf(this.current), this.direction);
+			
+			return this
+		},
+		
+		add: function () { this.reset() },
+		
+		remove: function () { this.reset() },
 		
 		reorder: function (offset, direction) {
 		
@@ -236,23 +341,22 @@ var Carousel = this.Carousel = new Class({
 			return this
 		},
 		
-		move: function (carousel, current, direction) {
+		move: function (current, direction) {
 		
 			var obj = {}, 
 				up = this.up,
 				property = this.property,
 				offset;
-		
-			if(this.options.circular) this.reorder(carousel.current, direction);
+					
+			if(this.options.circular) this.reorder(this.elements.indexOf(this.current), direction);
 			
-			offset = carousel.elements[current][property] - this.padding;
+			this.direction = direction;
+			this.current = this.elements[current];
+			offset = this.current[property] - this.padding;
 			
-			carousel.elements.each(function (el, index) {
-			
-				obj[index] = up ? {top: el[property] - offset} : {left: el[property] - offset}
-			});
-			
-			this.fx.cancel().start(obj).chain(function () { carousel.fireEvent('change', current) })
+			this.elements.each(function (el, index) { obj[index] = up ? {top: el[property] - offset} : {left: el[property] - offset} });
+			this.fireEvent('change', [current, this.elements[current]]).fx.cancel().start(obj)
 		}
 	})
-})();
+	
+})(document.id);
