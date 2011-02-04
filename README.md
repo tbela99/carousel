@@ -1,7 +1,7 @@
 Carousel
 ============
 
-Extensible mootools carousel.
+Extensible mootools carousel with dynamic elements addition/removal.
 
 [Demo](http://tbela99.github.com/carousel/Demos/horizontal.html)
 
@@ -13,7 +13,7 @@ Extensible mootools carousel.
 How to use
 ---------------------
 
-It is quite simple to use. a new class *Carousel.Extra* has been added. it allow you to make your carousel slide automatically. it has every Carousel options/properties plus some specific options which allow you to control the auto slide
+It is quite simple to use. a new class *Carousel.Extra* has been added. it allows you to make your carousel slide automatically. it has every Carousel options/properties plus some specific options which allow you to control the auto slide
 
 ### CSS:
 	/*
@@ -28,6 +28,16 @@ It is quite simple to use. a new class *Carousel.Extra* has been added. it allow
 		height: 300px;
 		width: 810px;
 		overflow: hidden;
+	}
+
+	/*
+
+		carousel tabs
+	*/
+	
+	div.tabs a.selected {
+
+		text-decoration: underline;
 	}
 
 	/*
@@ -85,51 +95,46 @@ It is quite simple to use. a new class *Carousel.Extra* has been added. it allow
 				current: 3,
 				previous: links.shift(),
 				next: links.pop(),
-				/* mode: 'horizontal', */
-				onChange: function (index) {
+				tabs: links,
+			/* 
 				
-					links.each(function (el, off) {
-					
-						el[off == index ? 'addClass' : 'removeClass']('selected')
-					})
-				},
+				mode: 'horizontal', 
+				autostart: false,
+				
+			*/
+				activeClass: 'selected',
 				fx: {
 				
 					duration: duration
 				}
-			});
-			
-		links.each(function (el, index) {
-		
-			el.addEvent('click', function (e) {
-				
-				e.stop();
-				
-				tab.move(index);
 			})
-		})
 	})
 	
 ### Options:
 
 * container  - (*mixed*) the element that contains the panels.
-* circular: determines how the carousel behaves when it reaches the bounds.
-* previous - (*mixed*) element that moves carousel to the left when clicked.
-* next - (*mixed*) element that moves carousel to the right when clicked.
-* mode - (*string*, optional) the carousel mode. allowed values are *vertical* and *horizontal*
-* scroll - (*int*) the number of items visible in the carousel, this must be set using css. the carousel will not attempt to resize the container to fit this number.
+* tabs  - (*mixed*, optional) elements associated to the carousel panels. a click on a tab makes associated panel visible.
 * selector  - (*string*, optional) use only children that match this selector. useful when you have something else in your html like arrows to move the carousel.
+* link  - (*string*, optional) indicates the way concurrent animations are handled. allowed values are *cancel* (default) cancel current animation, *ignore* ignore the new animation, *chain* run the new animation after the current is completed.
+* activeClass  - (*string*, optional) css class od the active tab.
+* inactiveClass  - (*mixed*, optional) css class of inactive tab.
+* circular: (*boolean*, optional) determines how the carousel behaves when it reaches the bounds.
+* previous - (*mixed*, optional) element that moves carousel to the left when clicked.
+* next - (*mixed*, optional) element that moves carousel to the right when clicked.
+* mode - (*string*, optional) the carousel mode. allowed values are *vertical* and *horizontal*
+* scroll - (*int*, optional) the number of items visible in the carousel, this must be set using css. the carousel will not attempt to resize the container to fit this number.
 * animation  - (*string*, optional) the transition plugin to use for transition. default to *Move* (the only plugin at this time)
 * fx - (*object*, optional) parameters for the animation. this can be any of the Fx parameters.
 * current  - (*int*, optional) index of the first displayed item. default to 0.
-* distance - the number of images to cycle through each time next/previous are called .... defaults to 1.
+* distance - (*int*, optional) the number of images to cycle through each time next/previous are called .... defaults to 1.
 
 ### Carousel.Extra Options:
 these options are specific to Carousel.Extra
 
-* interval  - (*int*) interval between 2 executions in seconds.
+* interval  - (*int*) interval between 2 animations in seconds.
 * delay - (*int*) delay between the moment the next/previous button is clicked and the auto slide is restarted.
-* reverse - (*boolean*) run the carousel in reverse order if true.
+* autostart  - (*boolean*) automatically start slide after the carousel is created.
+* reverse - (*boolean*) run the carousel in reverse order.
 
 ### Events:
 
@@ -145,6 +150,34 @@ Fired after the first item change.
 
 4. current - (*int*) index of the first displayed element.
 
+
+Method: add 
+------------
+
+add an element to the carousel.
+
+### Arguments:
+
+- panel - (*mixed*) element to add.
+- tab - (*mixed*, optional) tab associated to the element.
+- index - (*int*, optional) position where the tab will be inserted.
+
+### Returns:
+
+* (*object*) - This Carousel instance.
+
+Method: remove 
+------------
+
+remove element at given index from the carousel. you cannot remove an element while an animation is running. you cannot remove the current element
+
+### Arguments:
+
+- index - (*int*)
+
+### Returns:
+
+* (*object*) - object containing the element and its tab {panel: panel, tab: tab}.
 
 Method: next 
 ------------
@@ -176,7 +209,7 @@ display the previous set of items.
 Method: move
 ----------------
 
-make an item visible. nothing will happen if the item is already visible.
+make an item visible.
 
 ### Arguments:
 

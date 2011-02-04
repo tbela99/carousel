@@ -25,8 +25,8 @@ Carousel.Extra = new Class({
 		
 			interval: 10, //interval between 2 executions in seconds
 			delay: 10, //delay between the moment a tab is clicked and the auto slide is restarted
-			reverse: true //move backward
-			autostart: true,
+			reverse: true, //move backward
+			autostart: true
 		},
 		*/
 	
@@ -35,25 +35,58 @@ Carousel.Extra = new Class({
 		initialize: function(options) {
 
 			this.parent(Object.merge({interval: 10, delay: 10, autostart: true}, options));
-			var self = this;
+			var active,
+				events = this.events = {
+
+						click: function(e) {
+
+							e.stop();
+							
+							active = this.active;
+
+							if(active) this.stop();
+
+							var target = e.event.target,
+								index = this.tabs.indexOf(target);
+
+							while(target && index == -1) {
+
+								target = target.parentNode;
+								index = this.tabs.indexOf(target)
+							}
+							
+							if(index == -1) return;
+							
+							this.move(index);
+							if(active) this.start.delay(this.options.delay * 1000)
+
+						}.bind(this)
+					};
+					
+			this.tabs.each(function (tab) { tab.removeEvents(this.events).addEvents(events) }, this);
+			
+			this.events = events;
 			
 			//handle click on tab. wait 10 seconds before we go
 			['previous', 'next'].each(function (fn) {
 			
-				if($(self.options[fn])) $(self.options[fn]).addEvent('click', function (e) {
+				if($(this.options[fn])) $(this.options[fn]).addEvent('click', function (e) {
 			
 					e.stop();
 					
-					if(self.active) self.stop().start.delay(self.options.delay * 1000)
-				})
-			});
+					active = this.active;
+					
+					if(active) {
+					
+						this.stop().start.delay(this.options.delay * 1000);
+						this.active = active
+					}
+
+				}.bind(this))
+			}, this);
 		
-			this.reverse = !!this.options.reverse;
-			this.timer = new PeriodicalExecuter(this.update, this.options.interval);
-			
-			if(!this.options.autostart) this.timer.stop();
-			
-			return this
+			this.timer = new PeriodicalExecuter(this.update, this.options.interval).stop();
+			this[this.options.autostart ? 'start' : 'stop']()
 		},
 		
 		update: function () { return this[this.options.reverse ? 'previous' : 'next']() },

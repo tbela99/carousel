@@ -13,7 +13,7 @@ requires:
   - Element.Style
   - Element.Dimensions
   - Array
-provides: [Carousel]
+provides: [Carousel, Carousel.plugins.Move]
 ...
 */
 
@@ -89,7 +89,7 @@ var Carousel = this.Carousel = new Class({
 						click: function(e) {
 
 							e.stop();
-
+							
 							var target = e.event.target,
 								index = this.tabs.indexOf(target);
 
@@ -100,7 +100,6 @@ var Carousel = this.Carousel = new Class({
 							}
 							
 							if(index == -1) return;
-							
 							this.move(index)
 
 						}.bind(this)
@@ -148,7 +147,7 @@ var Carousel = this.Carousel = new Class({
 			
 			switch(index) {
 
-				case 0 :
+				case 0:
 						if(this.elements.length > 0) {
 
 							this.elements.unshift(panel.inject(this.elements[0], 'before'));
@@ -250,7 +249,7 @@ var Carousel = this.Carousel = new Class({
 			var up = this.up = options.mode == 'vertical',
 				parent = elements[0].getParent();
 				
-			parent.setStyles({height: elements[0].setStyle('display', 'block').getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
+			parent.setStyles({height: parent.getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
 			elements.each(function (el) { el.setStyles({display: 'block', position: 'absolute'}) });
 			
 			this.options = options;

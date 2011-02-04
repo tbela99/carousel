@@ -94,18 +94,17 @@ div.tabs a.selected {
 	
 		var duration = 300,
 		
-			links = $$('div.tabs a:first-child,div.tabs a:last-child'),
+			links = $$('div.tabs a'),
 			
 			carousel = new Carousel.Extra({
 				activeClass: 'selected',
-				autostart: false,
-				tabs: 'div.tabs a:not(:first-child):not(:last-child)',
 				container: 'slide',
 				scroll: 2,
 				circular: true,
 				current: 3,
 				previous: links.shift(),
 				next: links.pop(),
+				tabs: links,
 				/* mode: 'horizontal', */
 				fx: {
 				
