@@ -7,7 +7,7 @@ copyright: Copyright (c) 2010 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  core:1.2.3: 
+  core:1.3: 
   - Class.Extras
   - Element.Event
   - Element.Style
