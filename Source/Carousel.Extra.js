@@ -103,6 +103,12 @@ Carousel.Extra = new Class({
 			this.timer.stop();
 			this.active = false;
 			return this
+		},
+		
+		toggle: function() { 
+		
+			return this[this.active ? 'stop' : 'start']()
 		}
+
 	});
 		

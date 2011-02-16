@@ -249,10 +249,19 @@ starts the automatic slide.
 
 * (*object*) this Carousel instance
 
-Method: stop
+Carousel.Extra Method: Method: stop
 ------------------------
 
 stop the automatic slide.
+
+### Returns:
+
+* (*object*) this Carousel instance
+
+Carousel.Extra Method: Method: toggle
+------------------------
+
+toggle the automatic slide.
 
 ### Returns:
 
