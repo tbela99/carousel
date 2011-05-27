@@ -9,6 +9,7 @@ Extensible mootools carousel with dynamic elements addition/removal.
 
 - [Vertical](http://tbela99.github.com/carousel/Demos/vertical.html)
 - [Horizontal](http://tbela99.github.com/carousel/Demos/horizontal.html)
+- [3D carousel](http://tbela99.github.com/carousel/Demos/3d.html)
 
 How to use
 ---------------------
