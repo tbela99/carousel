@@ -6129,47 +6129,47 @@ provides: [String.Extras]
 (function(){
 
 var special = {
-	'a': /[àáâãäåaa]/g,
-	'A': /[ÀÁÂÃÄÅAA]/g,
-	'c': /[ccç]/g,
-	'C': /[CCÇ]/g,
+	'a': /[Ã Ã¡Ã¢Ã£Ã¤Ã¥aa]/g,
+	'A': /[Ã€ÃÃ‚ÃƒÃ„Ã…AA]/g,
+	'c': /[ccÃ§]/g,
+	'C': /[CCÃ‡]/g,
 	'd': /[dd]/g,
-	'D': /[DĞ]/g,
-	'e': /[èéêëee]/g,
-	'E': /[ÈÉÊËEE]/g,
+	'D': /[DÃ]/g,
+	'e': /[Ã¨Ã©ÃªÃ«ee]/g,
+	'E': /[ÃˆÃ‰ÃŠÃ‹EE]/g,
 	'g': /[g]/g,
 	'G': /[G]/g,
-	'i': /[ìíîï]/g,
-	'I': /[ÌÍÎÏ]/g,
+	'i': /[Ã¬Ã­Ã®Ã¯]/g,
+	'I': /[ÃŒÃÃÃ]/g,
 	'l': /[lll]/g,
 	'L': /[LLL]/g,
-	'n': /[ñnn]/g,
-	'N': /[ÑNN]/g,
-	'o': /[òóôõöøo]/g,
-	'O': /[ÒÓÔÕÖØ]/g,
+	'n': /[Ã±nn]/g,
+	'N': /[Ã‘NN]/g,
+	'o': /[Ã²Ã³Ã´ÃµÃ¶Ã¸o]/g,
+	'O': /[Ã’Ã“Ã”Ã•Ã–Ã˜]/g,
 	'r': /[rr]/g,
 	'R': /[RR]/g,
-	's': /[ššs]/g,
-	'S': /[ŠSS]/g,
+	's': /[Å¡Å¡s]/g,
+	'S': /[Å SS]/g,
 	't': /[tt]/g,
 	'T': /[TT]/g,
-	'ue': /[ü]/g,
-	'UE': /[Ü]/g,
-	'u': /[ùúûuµ]/g,
-	'U': /[ÙÚÛU]/g,
-	'y': /[ÿı]/g,
-	'Y': /[Ÿİ]/g,
-	'z': /[zz]/g,
-	'Z': /[ZZ]/g,
-	'th': /[ş]/g,
-	'TH': /[Ş]/g,
-	'dh': /[ğ]/g,
-	'DH': /[Ğ]/g,
-	'ss': /[ß]/g,
-	'oe': /[œ]/g,
-	'OE': /[Œ]/g,
-	'ae': /[æ]/g,
-	'AE': /[Æ]/g
+	'ue': /[Ã¼]/g,
+	'UE': /[Ãœ]/g,
+	'u': /[Ã¹ÃºÃ»uÂµ]/g,
+	'U': /[Ã™ÃšÃ›U]/g,
+	'y': /[Ã¿Ã½]/g,
+	'Y': /[Å¸Ã]/g,
+	'z': /[Å¾zz]/g,
+	'Z': /[Å½ZZ]/g,
+	'th': /[Ã¾]/g,
+	'TH': /[Ã]/g,
+	'dh': /[Ã°]/g,
+	'DH': /[Ã]/g,
+	'ss': /[ÃŸ]/g,
+	'oe': /[Å“]/g,
+	'OE': /[Å’]/g,
+	'ae': /[Ã¦]/g,
+	'AE': /[Ã†]/g
 },
 
 tidy = {
@@ -7762,7 +7762,7 @@ description: Methods for dealing with URI query strings.
 license: MIT-style license
 
 authors:
-  - Sebastian Markbåge
+  - Sebastian MarkbÃ¥ge
   - Aaron Newton
   - Lennart Pilon
   - Valerio Proietti

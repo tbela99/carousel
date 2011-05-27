@@ -31,7 +31,7 @@ provides: [Carousel.plugins.Rotate3D]
 		 */
 		options: {
 		
-			// La marge que l'on dans l'overlay crée
+			// La marge que l'on dans l'overlay
 			margin: 0,
 				
 			// Ellipse center
@@ -69,7 +69,7 @@ provides: [Carousel.plugins.Rotate3D]
 			elements.each(this.addElement.bind(this));
 			
 			this.options = Object.merge(this.options, options);
-			// On re-calcule le centre de l'elipse
+			// On re-calcule le centre de l'ellipse
 			this.center = {
 				x: (this.container.getSize().x / 2) + this.options.centerOffset.x,
 				y: this.options.centerOffset.y + this.options.yRadius
@@ -99,7 +99,6 @@ provides: [Carousel.plugins.Rotate3D]
 				y: Math.max(size.y, this.size.y)
 			};
 
-			// On rédéfinit la taille de l'overlay afin que les images ne sorte pas du flux
 			this.container.setStyle('height', this.getSize().y );
 			
 			return this;
@@ -158,9 +157,7 @@ provides: [Carousel.plugins.Rotate3D]
 			return {
 					width: width,
 					height: (size.y * sCoeff).toInt(),
-					// On ajoute la propriété z-index
 					zIndex: (this.options.zIndex + sCoeff * 2 * this.elements.length).toInt(), 
-					// On ajoute la position en décalant horizontalement l'image de la moitié sa largeur
 					left: (this.center.x + this.options.xRadius * Math.sin(angle + this.options.offsetAngle) - width / 2).toInt(),
 					top: (this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)).toInt()
 				};
@@ -171,7 +168,6 @@ provides: [Carousel.plugins.Rotate3D]
 			var length = this.elements.length, obj = {};
 				
 			this.elements.each(function (el, index) { obj[index] = this.getStyles(el, (length + index - current) % length) }, this);
-			
 			this.fireEvent('change', [current, this.elements[current]]).fx.cancel().start(obj);
 		}
 	})
