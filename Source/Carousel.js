@@ -274,10 +274,11 @@ var Carousel = this.Carousel = new Class({
 			}
 			
 			this.options = options;
-			this.elements = element.invoke('setStyles', {display: 'block', position: 'absolute'});
+			this.elements = elements;
 			this.property = 'offset' + (up ? 'Top' : 'Left');
 			this.margin = up ? ['marginTop', 'marginBottom'] : ['marginLeft', 'marginRight'];
 		
+			elements.each(this.addElement.bind(this));
 			this.direction = 1;
 			this.current = elements[0];
 			this.reset()
@@ -294,7 +295,7 @@ var Carousel = this.Carousel = new Class({
 			return this
 		},
 		
-		add: function (el) { 
+		addElement: function (el) {
 		
 			el.setStyles({display: 'block', position: 'absolute'});
 			
@@ -306,7 +307,12 @@ var Carousel = this.Carousel = new Class({
 				this.pad = style(parent, 'paddingLeft');
 			}
 			
-			this.reset() 
+			return this
+		},
+		
+		add: function (el) { 
+		
+			this.addElement(el).reset() 
 		},
 		
 		remove: function () { 
