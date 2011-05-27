@@ -123,10 +123,20 @@ It is quite simple to use. a new class *Carousel.Extra* has been added. it allow
 * next - (*mixed*, optional) element that moves carousel to the right when clicked.
 * mode - (*string*, optional) the carousel mode. allowed values are *vertical* and *horizontal*
 * scroll - (*int*, optional) the number of items visible in the carousel, this must be set using css. the carousel will not attempt to resize the container to fit this number.
-* animation  - (*string*, optional) the transition plugin to use for transition. default to *Move* (the only plugin at this time)
+* animation  - (*string*, optional) the transition plugin to use for transition. default to *Move*. possible values are *Move* and *Rotate3D*
 * fx - (*object*, optional) parameters for the animation. this can be any of the Fx parameters.
 * current  - (*int*, optional) index of the first displayed item. default to 0.
 * distance - (*int*, optional) the number of images to cycle through each time next/previous are called .... defaults to 1.
+
+### Additional options for Rotate3D effect:
+
+* margin  - (*int*, optional) carousel margin.
+* centerOffset  - (*object*, optional) offset relative to the center of the carousel ellipsis. default to {x:0, y: 0}.
+* xRadius  - (*string*, optional) carousel ellipsis x radius.
+* yRadius  - (*string*, optional) carousel ellipsis x radius.
+* min  - (*mixed*, optional) min element size ratio.
+* offsetAngle: (*boolean*, optional) determines how the carousel behaves when it reaches the bounds.
+* zIndex - (*int*, optional) elements zIndex, default to 100.
 
 ### Carousel.Extra Options:
 these options are specific to Carousel.Extra

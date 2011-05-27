@@ -2,7 +2,7 @@
 ---
 script: Carousel.js
 license: MIT-style license.
-description: Tab - Minimalistic but extensible tab swapper.
+description: Carousel - Extensible mootools carousel with dynamic elements addition/removal.
 copyright: Copyright (c) 2010 Thierry Bela
 authors: [Thierry Bela]
 
@@ -179,12 +179,10 @@ var Carousel = this.Carousel = new Class({
 				tab = this.tabs[index];
 				
 			//
-			if(this.running || panel == undefined/*  || panel == this.selected */) return null;
+			if(panel == undefined) return null;
 
 			this.elements.splice(index, 1);
 			panel.dispose();
-
-			if(this.anim.remove) this.anim.remove(panel, index);
 
 			if(tab) {
 
@@ -192,7 +190,17 @@ var Carousel = this.Carousel = new Class({
 				this.tabs.splice(index, 1);
 			}
 
-			this.current = this.elements.indexOf(this.selected);
+			if(this.anim.remove) this.anim.remove(panel, index);
+			
+			var current = this.elements.indexOf(this.selected);
+			
+			if(current == -1 && this.elements.length > 0) {
+			
+				current = Math.max(index - 1, 0);
+				this.move(current)
+			} 
+
+			this.current = current;
 
 			return {panel: panel, tab: tab}
 		},
@@ -249,7 +257,7 @@ var Carousel = this.Carousel = new Class({
 	
 	Carousel.prototype.plugins.Move = new Class({
 	
-		Implements: [Events],
+		Implements: Events,
 		initialize: function (elements, options) {
 		
 			var up = this.up = options.mode == 'vertical',
@@ -301,7 +309,11 @@ var Carousel = this.Carousel = new Class({
 			this.reset() 
 		},
 		
-		remove: function () { this.reset() },
+		remove: function () { 
+		
+			this.fx.cancel();
+			this.reset() 
+		},
 		
 		reorder: function (offset, direction) {
 		
