@@ -96,8 +96,9 @@ div.tabs a.selected {
 	
 		var duration = 300,
 		
-			links = $$('div.tabs a'),
-			
+			div = document.getElement('div.tabs');
+			links = div.getElements('a'),
+						
 			carousel = new Carousel.Extra({
 				activeClass: 'selected',
 				container: 'slide',
@@ -147,7 +148,7 @@ div.tabs a.selected {
 				
 					this.eliminate('panel');
 					removed--;
-					carousel.add(panel.panel, panel.tab, this.value)
+					carousel.add(panel.panel, panel.tab.inject(div.getFirst(), 'after'), this.value)
 				}
 			}
 		}

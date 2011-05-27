@@ -17,7 +17,7 @@ provides: [Carousel, Carousel.plugins.Move]
 ...
 */
 
-(function ($) {
+!function ($) {
 
 function style(el, style) {
 
@@ -154,6 +154,12 @@ var Carousel = this.Carousel = new Class({
 							if(tab) this.tabs.unshift(tab.inject(this.tabs[0], 'before'));
 						}
 
+						else {
+						
+							this.elements.push(panel.inject(this.options.container));
+							if(tab) this.tabs.push(tab);
+						}
+
 						break;
 				default:
 						this.elements.splice(index, 0, panel.inject(this.elements[index - 1], 'after'));
@@ -173,7 +179,7 @@ var Carousel = this.Carousel = new Class({
 				tab = this.tabs[index];
 				
 			//
-			if(this.running || panel == undefined || panel == this.selected) return null;
+			if(this.running || panel == undefined/*  || panel == this.selected */) return null;
 
 			this.elements.splice(index, 1);
 			panel.dispose();
@@ -247,17 +253,22 @@ var Carousel = this.Carousel = new Class({
 		initialize: function (elements, options) {
 		
 			var up = this.up = options.mode == 'vertical',
+				parent;
+
+			if(elements.length > 0) {
+			
 				parent = elements[0].getParent();
 				
-			parent.setStyles({height: parent.getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
-			elements.each(function (el) { el.setStyles({display: 'block', position: 'absolute'}) });
+				parent.setStyles({height: parent.getStyle('height'), position: 'relative', overflow: 'hidden'}).getStyle('padding' + (this.up ? 'Top' : 'Left'));
+				
+				this.padding = style(parent, up ? 'paddingTop' : 'paddingLeft');
+				this.pad = style(parent, 'paddingLeft');
+			}
 			
 			this.options = options;
-			this.elements = elements;
+			this.elements = element.invoke('setStyles', {display: 'block', position: 'absolute'});
 			this.property = 'offset' + (up ? 'Top' : 'Left');
 			this.margin = up ? ['marginTop', 'marginBottom'] : ['marginLeft', 'marginRight'];
-			this.padding = style(parent, up ? 'paddingTop' : 'paddingLeft');
-			this.pad = style(parent, 'paddingLeft');
 		
 			this.direction = 1;
 			this.current = elements[0];
@@ -275,7 +286,20 @@ var Carousel = this.Carousel = new Class({
 			return this
 		},
 		
-		add: function () { this.reset() },
+		add: function (el) { 
+		
+			el.setStyles({display: 'block', position: 'absolute'});
+			
+			if(isNaN(this.pad)) {
+			
+				var parent = el.getParent();
+				
+				this.padding = style(parent, this.up ? 'paddingTop' : 'paddingLeft');
+				this.pad = style(parent, 'paddingLeft');
+			}
+			
+			this.reset() 
+		},
 		
 		remove: function () { this.reset() },
 		
@@ -358,4 +382,4 @@ var Carousel = this.Carousel = new Class({
 		}
 	})
 	
-})(document.id);
+}(document.id);

@@ -85,6 +85,7 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Carousel.js"></script>
+<script type="text/javascript" src="../Source/Carousel.Rotate3D.js"></script>
 <script type="text/javascript" src="../Source/Carousel.Extra.js"></script>
 
 <script type="text/javascript">
@@ -96,13 +97,15 @@ div.tabs a.selected {
 		
 			div = document.getElement('div.tabs');
 			links = div.getElements('a'),
-						
+			
 			carousel = new Carousel.Extra({
 				activeClass: 'selected',
 				container: 'slide',
-				scroll: 2,
+				scroll: 1,
+				distance: 1,
 				circular: true,
 				current: 3,
+				animation: 'Rotate3D',
 				previous: links.shift(),
 				next: links.pop(),
 				tabs: links,
