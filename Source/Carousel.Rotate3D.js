@@ -115,6 +115,8 @@ provides: [Carousel.plugins.Rotate3D]
 			this.reset()
 		},
 		
+		cancel: function () { this.fx.cancel() },
+		
 		reset: function () {
 		
 			//
