@@ -61,15 +61,18 @@ var Carousel = this.Carousel = new Class({
 		initialize: function (options) {
 		
 			this.addEvents({
-				change: function (current, selected) { 
+				change: function (current) { 
 				
 					if(this.tabs[this.current]) this.tabs[this.current].addClass(this.options.inactiveClass).removeClass(this.options.activeClass)
 					if(this.tabs[current]) this.tabs[current].addClass(this.options.activeClass).removeClass(this.options.inactiveClass);
 					
+				},
+				complete: function (current, selected) { 
+				
 					this.current = current;
 					this.selected = selected
-				},
-				complete: function () { this.running = false }
+					this.running = false 
+				}
 			}).setOptions(options);
 			
 			['previous', 'next'].each(function (fn) {
@@ -108,7 +111,7 @@ var Carousel = this.Carousel = new Class({
 			this.tabs = $$(options.tabs).addEvents(events);
 			this.elements = $(options.container).getChildren(options.selector);
 			
-			this.anim = new this.plugins[this.options.animation](this.elements, this.options).addEvents({change: function () { this.fireEvent('change', arguments) }.bind(this), complete: function () { this.fireEvent('complete', arguments) }.bind(this)});
+			this.anim = new this.plugins[this.options.animation](this.elements, this.options, this).addEvents({change: function () { this.fireEvent('change', arguments) }.bind(this), complete: function () { this.fireEvent('complete', arguments) }.bind(this)});
 			
 			this.move(current || 0);
 		},
@@ -194,13 +197,11 @@ var Carousel = this.Carousel = new Class({
 			
 			var current = this.elements.indexOf(this.selected);
 			
-			if(current == -1 && this.elements.length > 0) {
+			if((current == -1 || current != this.current) && this.elements.length > 0) {
 			
 				current = Math.max(index - 1, 0);
 				this.move(current)
-			} 
-
-			this.current = current;
+			}
 
 			return {panel: panel, tab: tab}
 		},
@@ -241,7 +242,7 @@ var Carousel = this.Carousel = new Class({
 		
 			if(index < 0 || length <= scroll || index >= length) return this;
 
-			if(direction == undefined) {
+			if(direction == null) {
 				
 				//detect direction. inspired by moostack
 				var forward = current < index ? index - current : elements.length - current + index,
@@ -249,7 +250,7 @@ var Carousel = this.Carousel = new Class({
 				
 				direction = Math.abs(forward) <= Math.abs(backward) ? 1 : -1
 			}	
-
+			
 			this.anim.move(index, direction);
 			return this
 		}
@@ -289,7 +290,13 @@ var Carousel = this.Carousel = new Class({
 		reset: function () {
 		
 			//
-			this.fx = new Fx.Elements(this.elements, this.options.fx).addEvents({complete: function () { this.fireEvent('complete', [this.elements.indexOf(this.current), this.current]) }.bind(this)})			
+			this.fx = new Fx.Elements(this.elements, this.options.fx).addEvents({complete: function () {
+
+				this.current = this.elements[this.index];
+				this.fireEvent('complete', [this.index, this.current]) 
+			
+			}.bind(this)});
+			
 			this.reorder(this.elements.indexOf(this.current), this.direction);
 			
 			return this
@@ -387,16 +394,17 @@ var Carousel = this.Carousel = new Class({
 			var obj = {}, 
 				up = this.up,
 				property = this.property,
-				offset;
+				offset,
+				element = this.elements[current];
 					
 			if(this.options.circular) this.reorder(this.elements.indexOf(this.current), direction);
 			
+			this.index = current;
 			this.direction = direction;
-			this.current = this.elements[current];
-			offset = this.current[property] - this.padding;
+			offset = element[property] - this.padding;
 			
-			this.elements.each(function (el, index) { obj[index] = up ? {top: el[property] - offset} : {left: el[property] - offset} });
-			this.fireEvent('change', [current, this.elements[current]]).fx.cancel().start(obj)
+			this.elements.each(function (el, index) { obj[index] = up ? {top: el[property] - offset} : {left: el[property] - offset} }); 
+			this.fireEvent('change', [current, element]).fx.cancel().start(obj)
 		}
 	})
 	

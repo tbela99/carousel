@@ -16,12 +16,28 @@ requires:
   - Array
 provides: [Carousel.plugins.Rotate3D]
 ...
+TODO: use scaling instead of resizing whenever possible
 */
 
 !function ($) {
 
-	var key = 'cr:3d';
-	
+	var key = 'cr:3d',
+		scale = (function (prop) {
+		
+			var div = document.createElement('div'),
+				result = false,
+				prefixes = ['Moz','Webkit','Khtml','O','ms'], 
+				upper = prop.charAt(0).toUpperCase() + prop.slice(1); 
+			
+			for(var i = prefixes.length; i--;) if(prefixes[i] + upper in div.style) return prefixes[i] + upper; 
+					
+			result = div.style[prop] != null;
+			
+			div = null;
+				
+			return result ? prop : null
+		})('transform');
+			
 	Carousel.prototype.plugins.Rotate3D = new Class({
     
 		Implements: Events,
@@ -32,7 +48,7 @@ provides: [Carousel.plugins.Rotate3D]
 		options: {
 		
 			// La marge que l'on dans l'overlay
-			margin: 0,
+			margin: 10,
 				
 			// Ellipse center
 			center: {x:0, y:0},
@@ -60,9 +76,29 @@ provides: [Carousel.plugins.Rotate3D]
 		
 		size: {x:0, y:0},
 
-		initialize: function (elements, options) {
+		initialize: function (elements, options, carousel) {
 
-			this.container = $(options.container);
+			this.container = $(options.container).
+				//brings an element to the front
+				addEvent('click', function (e) {
+		
+					var element = e.event.target,
+						index = this.elements.indexOf(element);
+					
+					while(index == -1 && element) {
+								
+						element = element.parentNode;
+						index = this.elements.indexOf(element)
+					}
+					
+					if(element && element != this.current) {
+					
+						e.stop();
+						carousel.move(index); return
+					}
+					
+				}.bind(this));
+				
 			this.elements = elements;
 			this.current = elements[0];
 			
@@ -77,11 +113,16 @@ provides: [Carousel.plugins.Rotate3D]
 			
 			this.reset()
 		},
-
+		
 		reset: function () {
 		
 			//
-			this.fx = new Fx.Elements(this.elements, this.options.fx).addEvents({complete: function () { this.fireEvent('complete', [this.elements.indexOf(this.current), this.current]) }.bind(this)})			
+			this.fx = new Fx.Elements(this.elements, this.options.fx).addEvents({complete: function () { 
+
+				this.current = this.elements[this.index];
+				this.fireEvent('complete', [this.index, this.current]) 
+			
+			}.bind(this)});			
 			this.reorder(this.elements.indexOf(this.current), this.direction);
 			
 			return this
@@ -89,7 +130,7 @@ provides: [Carousel.plugins.Rotate3D]
 			
 		addElement: function(el) {
 		
-			var size = el.setStyles({display: 'block', overflow: 'hidden'}).getSize();
+			var size = el.setStyles({display: 'block'}).getSize();
 			
 			el.store(key, size).style.position = 'absolute';
 				
@@ -111,7 +152,9 @@ provides: [Carousel.plugins.Rotate3D]
 			//reset size
 			this.fx.cancel();
 			var size = el.retrieve(key);
-			el.setStyles({width: size.x, height: size.y}).eliminate(key);
+			
+			if(scale) el.setStyle(scale, 'scale(1,1)');
+			else el.setStyles({width: size.x, height: size.y}).eliminate(key);
 			this.elements.each(function (el) { el.setStyles(el.retrieve(key)) });
 			this.reset()
 		},
@@ -152,23 +195,35 @@ provides: [Carousel.plugins.Rotate3D]
 				angle = this.getAngle(index),
 			
 				sCoeff = 1 + (1-this.options.min) / 2  * (Math.cos(angle)-1),
-				width = (size.x * sCoeff).toInt();
+				width = (size.x * sCoeff).toInt(),
+				styles = scale ?
+					
+					{
+						zIndex: (this.options.zIndex + sCoeff * 2 * this.elements.length).toInt(), 
+						left: (this.center.x + this.options.xRadius * Math.sin(angle + this.options.offsetAngle) - width / 2).toInt(),
+						top: (this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)).toInt()
+					}
+				:
+					{
+						width: width,
+						height: (size.y * sCoeff).toInt(),
+						zIndex: (this.options.zIndex + sCoeff * 2 * this.elements.length).toInt(), 
+						left: (this.center.x + this.options.xRadius * Math.sin(angle + this.options.offsetAngle) - width / 2).toInt(),
+						top: (this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)).toInt()
+					};
+					
+			styles[scale] = 'scale(' + sCoeff + ',' + sCoeff + ')';
 			
-			return {
-					width: width,
-					height: (size.y * sCoeff).toInt(),
-					zIndex: (this.options.zIndex + sCoeff * 2 * this.elements.length).toInt(), 
-					left: (this.center.x + this.options.xRadius * Math.sin(angle + this.options.offsetAngle) - width / 2).toInt(),
-					top: (this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)).toInt()
-				};
+			return styles
 		},
 		
 		move: function(current) {
 			
 			var length = this.elements.length, obj = {};
 				
+			this.index = current;
 			this.elements.each(function (el, index) { obj[index] = this.getStyles(el, (length + index - current) % length) }, this);
-			this.fireEvent('change', [current, this.elements[current]]).fx.cancel().start(obj);
+			this.fireEvent('change', [current, this.elements[current]]).fx.cancel().start(obj)
 		}
 	})
 	

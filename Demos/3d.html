@@ -67,6 +67,8 @@ div.tabs a.selected {
 	position: relative;
 	display: inline-block;
 	width: 400px;
+	height: 300px;
+	overflow: hidden;
 	margin-left: 5px;
 }
 #slide span {
@@ -80,8 +82,10 @@ div.tabs a.selected {
 	background: url(../Assets/images/grey.png);
 	background: rgba(0, 0, 0, .7)
 }
+
 </style>
 <script type="text/javascript" src="../mootools.js"></script>
+<script type="text/javascript" src="../Reflection.js"></script>
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Carousel.js"></script>
@@ -91,12 +95,14 @@ div.tabs a.selected {
 <script type="text/javascript">
 //<![CDATA[
 
+	var carousel;
+	
 	window.addEvent('domready', function () {
 	
 		var duration = 300,
 		
 			div = document.getElement('div.tabs');
-			links = div.getElements('a'),
+			links = div.getElements('a');
 			
 			carousel = new Carousel.Extra({
 				activeClass: 'selected',
@@ -109,6 +115,15 @@ div.tabs a.selected {
 				previous: links.shift(),
 				next: links.pop(),
 				tabs: links,
+				min: .1,
+				yRadius: 10,
+				margin: 25,
+				offsetAngle: -195,
+				centerOffset: {
+				
+					x: -100,
+					y: 0
+				},
 				/* mode: 'horizontal', */
 				fx: {
 				
@@ -154,6 +169,17 @@ div.tabs a.selected {
 		}
 		
 		$$('input.remove').addEvents({click: change, change: change})
+	}).
+	//add image reflection
+	addEvent('load', function () {
+	
+		Array.each(document.images, function (img) {
+		
+			document.id(img.parentNode).setStyles({left: -5, position: 'absolute'});
+			document.id(img.parentNode.parentNode).setStyles({maxWidth: 400, overflow: 'visible'});
+			
+			Reflection.add(img)
+		})
 	})
 //]]></script>
 </head><body>
