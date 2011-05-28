@@ -41,9 +41,9 @@ var Carousel = this.Carousel = new Class({
 			container: null,
 			selector: '',
 			tabs: [],
+		*/
 			activeClass: '',
 			inactiveClass: '',
-		*/
 			link: 'cancel',
 			mode: 'horizontal',
 			animation: 'Move',

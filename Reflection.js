@@ -44,9 +44,9 @@ Script: Reflection.js
 				divHeight = Math.floor(p.height*(1+options['height'])),
 				reflectionWidth = p.width;
 				
-				if (Browser.Engine.trident && Browser.Engine.version < 9) {
+				if (Browser.ie && Browser.version < 9) {
 					/* Fix hyperlinks */
-					if(p.getParent().get('tag') == 'a') d = new Element('a', {href: p.getParent().href});
+					//if(p.parentNode.tagName == 'A') d = new Element('a', {href: p.parentNode.href}).inject(p.parentNode, 'after');
 						
 					/* Copy original image's classes & styles to div */
 					if(newClasses) d.className = newClasses;

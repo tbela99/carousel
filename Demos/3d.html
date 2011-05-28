@@ -173,14 +173,18 @@ div.tabs a.selected {
 	//add image reflection
 	addEvent('load', function () {
 	
-		var images = new Elements(document.images);
+		//add reflection only if the container can be scaled otherwise the content will flood out of the container
+		if(!Carousel.scale) return;
+		
+		var images = new Elements(document.images),
+			ie8 = Browser.ie && Browser.version < 9;
 		
 		images.each(function (img) {
 		
-			document.id(img.parentNode).setStyles({left: Browser.ie && Browser.version < 9 ? 0 : -5, position: 'absolute'});
+			document.id(img.parentNode).setStyles({left: ie8 ? 0 : -5, position: 'absolute'});
 			document.id(img.parentNode.parentNode).setStyles({maxWidth: 400, overflow: 'visible'});
 			
-			Reflection.add(img)
+			Reflection.add(img);
 		})
 	})
 //]]></script>
