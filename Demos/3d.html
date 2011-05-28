@@ -115,13 +115,13 @@ div.tabs a.selected {
 				previous: links.shift(),
 				next: links.pop(),
 				tabs: links,
-				min: .1,
-				yRadius: 10,
-				margin: 25,
-				offsetAngle: -195,
+				min: Carousel.scale ? .1 : .4,
+				yRadius: Carousel.scale ? 10 : 50,
+				margin: Carousel.scale ? 25 : 0,
+				offsetAngle: Carousel.scale ? -195 : 0,
 				centerOffset: {
 				
-					x: -100,
+					x: Carousel.scale ? -100 : 0,
 					y: 0
 				},
 				/* mode: 'horizontal', */
@@ -173,9 +173,11 @@ div.tabs a.selected {
 	//add image reflection
 	addEvent('load', function () {
 	
-		Array.each(document.images, function (img) {
+		var images = new Elements(document.images);
 		
-			document.id(img.parentNode).setStyles({left: -5, position: 'absolute'});
+		images.each(function (img) {
+		
+			document.id(img.parentNode).setStyles({left: Browser.ie && Browser.version < 9 ? 0 : -5, position: 'absolute'});
 			document.id(img.parentNode.parentNode).setStyles({maxWidth: 400, overflow: 'visible'});
 			
 			Reflection.add(img)

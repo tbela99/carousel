@@ -16,28 +16,29 @@ requires:
   - Array
 provides: [Carousel.plugins.Rotate3D]
 ...
-TODO: use scaling instead of resizing whenever possible
 */
 
 !function ($) {
 
 	var key = 'cr:3d',
+		div,
 		scale = (function (prop) {
 		
 			var div = document.createElement('div'),
-				result = false,
+				i,
 				prefixes = ['Moz','Webkit','Khtml','O','ms'], 
 				upper = prop.charAt(0).toUpperCase() + prop.slice(1); 
 			
-			for(var i = prefixes.length; i--;) if(prefixes[i] + upper in div.style) return prefixes[i] + upper; 
+			for(i = prefixes.length; i--;) if(prefixes[i] + upper in div.style) return prefixes[i] + upper; 
 					
-			result = div.style[prop] != null;
-			
-			div = null;
-				
-			return result ? prop : null
+			return div.style[prop] != null ? prop : null
 		})('transform');
-			
+		
+		
+	if(scale) Carousel.scale = scale;
+	
+	div = null;
+					
 	Carousel.prototype.plugins.Rotate3D = new Class({
     
 		Implements: Events,
@@ -82,7 +83,7 @@ TODO: use scaling instead of resizing whenever possible
 				//brings an element to the front
 				addEvent('click', function (e) {
 		
-					var element = e.event.target,
+					var element = e.target,
 						index = this.elements.indexOf(element);
 					
 					while(index == -1 && element) {
@@ -212,8 +213,8 @@ TODO: use scaling instead of resizing whenever possible
 						top: (this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)).toInt()
 					};
 					
-			styles[scale] = 'scale(' + sCoeff + ',' + sCoeff + ')';
-			
+			if(scale) styles[scale] = 'scale(' + sCoeff + ',' + sCoeff + ')';
+
 			return styles
 		},
 		

@@ -21,7 +21,7 @@ Script: Reflection.js
  * Freely distributable under MIT-style license.
  */
  
- (function ($) {
+!function ($) {
  
 	this.Reflection = {
 	
@@ -68,9 +68,9 @@ Script: Reflection.js
 					d.setStyles({height: divHeight, width: reflectionWidth});
 					p.parentNode.replaceChild(d, p);
 					
-					
 					d.appendChild(p);
-					d.appendChild(reflection);
+					d.appendChild(reflection)
+					
 				} else {
 				
 					var canvas = new Element('canvas');
@@ -111,7 +111,7 @@ Script: Reflection.js
 			
 						context.fillStyle = gradient;
 						context.rect(0, 0, reflectionWidth, reflectionHeight*2);
-						context.fill();
+						context.fill()
 					}
 				}
 			}
@@ -127,4 +127,4 @@ Script: Reflection.js
 		}
 	}
 
- })(document.id);
+ }(document.id);

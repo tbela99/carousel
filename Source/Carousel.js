@@ -93,7 +93,7 @@ var Carousel = this.Carousel = new Class({
 
 							e.stop();
 							
-							var target = e.event.target,
+							var target = e.target,
 								index = this.tabs.indexOf(target);
 
 							while(target && index == -1) {
