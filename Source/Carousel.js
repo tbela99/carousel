@@ -391,8 +391,7 @@ var Carousel = this.Carousel = new Class({
 		
 		move: function (current, direction) {
 		
-			var obj = {}, 
-				up = this.up,
+			var up = this.up,
 				property = this.property,
 				offset,
 				element = this.elements[current];
@@ -402,9 +401,7 @@ var Carousel = this.Carousel = new Class({
 			this.index = current;
 			this.direction = direction;
 			offset = element[property] - this.padding;
-			
-			this.elements.each(function (el, index) { obj[index] = up ? {top: el[property] - offset} : {left: el[property] - offset} }); 
-			this.fireEvent('change', [current, element]).fx.cancel().start(obj)
+			this.fireEvent('change', [current, element]).fx.cancel().start(Object.map(this.elements, function (el, index) { if(!isNaN(index)) return up ? {top: el[property] - offset} : {left: el[property] - offset} }))
 		}
 	})
 	

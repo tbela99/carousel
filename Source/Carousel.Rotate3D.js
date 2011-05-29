@@ -20,20 +20,22 @@ provides: [Carousel.plugins.Rotate3D]
 
 !function ($) {
 
-	var key = 'cr:3d',
-		div,
-		scale = (function (prop) {
+	var div = document.createElement('div');
 		
-			var div = document.createElement('div'),
-				i,
-				prefixes = ['Moz','Webkit','Khtml','O','ms'], 
-				upper = prop.charAt(0).toUpperCase() + prop.slice(1); 
+	function getPrefix(prop) {
 			
-			for(i = prefixes.length; i--;) if(prefixes[i] + upper in div.style) return prefixes[i] + upper; 
-					
-			return div.style[prop] != null ? prop : null
-		})('transform');
+		var i,
+			prefixes = ['Khtml','Moz','Webkit','O','ms'], 
+			upper = prop.charAt(0).toUpperCase() + prop.slice(1); 
 		
+		for(i = prefixes.length; i--;) if(prefixes[i] + upper in div.style) return prefixes[i] + upper; 
+				
+		return div.style[prop] != null ? prop : null
+	}
+			
+	var key = 'cr:3d',
+		scale = getPrefix('transform'),
+		transition = getPrefix('transition');
 		
 	if(scale) Carousel.scale = scale;
 	
@@ -48,6 +50,7 @@ provides: [Carousel.plugins.Rotate3D]
 		 */
 		options: {
 		
+			opacity: 1,
 			// La marge que l'on dans l'overlay
 			margin: 10,
 				
@@ -100,12 +103,12 @@ provides: [Carousel.plugins.Rotate3D]
 					
 				}.bind(this));
 				
+			this.options = Object.merge(this.options, options);
 			this.elements = elements;
 			this.current = elements[0];
 			
 			elements.each(this.addElement.bind(this));
 			
-			this.options = Object.merge(this.options, options);
 			// On re-calcule le centre de l'ellipse
 			this.center = {
 				x: (this.container.getSize().x / 2) + this.options.centerOffset.x,
@@ -133,10 +136,11 @@ provides: [Carousel.plugins.Rotate3D]
 			
 		addElement: function(el) {
 		
-			var size = el.setStyles({display: 'block'}).getSize();
+			var size = el.setStyles({display: 'block', opacity: this.options.opacity}).getSize();
 			
 			el.store(key, size).style.position = 'absolute';
-				
+			if(transition) el.style[transition] =  scale.hyphenate() + ' ' + this.options.fx.duration + 'ms cubic-bezier(0.37, 0.01, 0.63, 1)';
+			
 			// On recalcule la taille maximale
 			this.size = {
 				x: Math.max(size.x, this.size.x),
@@ -156,8 +160,9 @@ provides: [Carousel.plugins.Rotate3D]
 			this.fx.cancel();
 			var size = el.retrieve(key);
 			
-			if(scale) el.setStyle(scale, 'scale(1,1)');
-			else el.setStyles({width: size.x, height: size.y}).eliminate(key);
+			if(transition) el.style[transition] = '';
+			if(scale) el.style[scale] = 'scale(1,1)';
+			else el.setStyles({width: size.x, height: size.y, opacity: this.options.opacity}).eliminate(key);
 			this.elements.each(function (el) { el.setStyles(el.retrieve(key)) });
 			this.reset()
 		},
@@ -183,10 +188,10 @@ provides: [Carousel.plugins.Rotate3D]
 		
 		getAngle: function(index) {
 		
-			var teta = (index / this.elements.length) * 2 * Math.PI;
+			var teta = index * 2 * Math.PI / this.elements.length;
 			
 			teta = (teta + Math.PI) % (2 * Math.PI) - Math.PI;
-			teta = ((teta > 0) ? 1 : -1) * Math.PI * Math.pow( Math.abs(teta) / Math.PI , this.options.powerExponent);
+			teta = (teta > 0 ? 1 : -1) * Math.PI * Math.pow( Math.abs(teta) / Math.PI , this.options.powerExponent);
 			
 			return teta;
 		},
@@ -198,35 +203,28 @@ provides: [Carousel.plugins.Rotate3D]
 				angle = this.getAngle(index),
 			
 				sCoeff = 1 + (1-this.options.min) / 2  * (Math.cos(angle)-1),
-				width = (size.x * sCoeff).toInt(),
-				styles = scale ?
-					
-					{
+				width = size.x * sCoeff,
+				styles = {
 						zIndex: (this.options.zIndex + sCoeff * 2 * this.elements.length).toInt(), 
-						left: (this.center.x + this.options.xRadius * Math.sin(angle + this.options.offsetAngle) - width / 2).toInt(),
-						top: (this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)).toInt()
-					}
-				:
-					{
-						width: width,
-						height: (size.y * sCoeff).toInt(),
-						zIndex: (this.options.zIndex + sCoeff * 2 * this.elements.length).toInt(), 
-						left: (this.center.x + this.options.xRadius * Math.sin(angle + this.options.offsetAngle) - width / 2).toInt(),
-						top: (this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)).toInt()
+						left: this.center.x + this.options.xRadius * Math.sin(angle + this.options.offsetAngle) - width / 2,
+						top: this.center.y + this.options.yRadius * Math.cos(angle + this.options.offsetAngle)
 					};
 					
 			if(scale) styles[scale] = 'scale(' + sCoeff + ',' + sCoeff + ')';
-
+			else Object.merge(styles, {overflow: 'hidden', height: size.y * sCoeff, width: width })
+			
 			return styles
 		},
 		
 		move: function(current) {
 			
-			var length = this.elements.length, obj = {};
+			var length = this.elements.length;
 				
 			this.index = current;
-			this.elements.each(function (el, index) { obj[index] = this.getStyles(el, (length + index - current) % length) }, this);
-			this.fireEvent('change', [current, this.elements[current]]).fx.cancel().start(obj)
+			this.fireEvent('change', [current, this.elements[current]]).fx.cancel().start(Object.map(this.elements, function (el, index) {
+			
+				if(!isNaN(index)) return this.getStyles(el, (length + index - current) % length)
+			}, this))
 		}
 	})
 	
