@@ -20,7 +20,10 @@ provides: [Carousel.plugins.Rotate3D]
 
 !function ($) {
 
-	var div = document.createElement('div');
+	var key = 'cr:3d',
+		div = document.createElement('div'),
+		scale,
+		transition;
 		
 	function getPrefix(prop) {
 			
@@ -33,9 +36,8 @@ provides: [Carousel.plugins.Rotate3D]
 		return div.style[prop] != null ? prop : null
 	}
 			
-	var key = 'cr:3d',
-		scale = getPrefix('transform'),
-		transition = getPrefix('transition');
+	scale = getPrefix('transform');
+	transition = getPrefix('transition');
 		
 	if(scale) Carousel.scale = scale;
 	
@@ -128,10 +130,9 @@ provides: [Carousel.plugins.Rotate3D]
 				this.current = this.elements[this.index];
 				this.fireEvent('complete', [this.index, this.current]) 
 			
-			}.bind(this)});			
-			this.reorder(this.elements.indexOf(this.current), this.direction);
+			}.bind(this)});	
 			
-			return this
+			return this.reorder(this.elements.indexOf(this.current), this.direction)
 		},
 			
 		addElement: function(el) {
@@ -173,7 +174,7 @@ provides: [Carousel.plugins.Rotate3D]
 			return {
 				x: this.size.x + 2 * ( this.options.margin + this.options.xRadius),
 				y: this.size.y + 2 * ( this.options.margin + this.options.yRadius)
-			};
+			}
 		},
 		
 		// Position images without transition
@@ -199,7 +200,7 @@ provides: [Carousel.plugins.Rotate3D]
 		// retrieve element styles
 		getStyles: function(el, index) {
 		
-			var size   = el.retrieve(key),
+			var size = el.retrieve(key),
 				angle = this.getAngle(index),
 			
 				sCoeff = 1 + (1-this.options.min) / 2  * (Math.cos(angle)-1),
