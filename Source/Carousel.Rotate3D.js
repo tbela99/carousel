@@ -18,22 +18,27 @@ provides: [Carousel.plugins.Rotate3D]
 ...
 */
 
-!function ($) {
+!function (context) {
+
+"use strict";
 
 	var key = 'cr:3d',
 		div = document.createElement('div'),
 		scale,
+			prefixes = ['Moz','Webkit','O','ms','Khtml'], 
 		transition;
 		
 	function getPrefix(prop) {
 			
-		var i,
-			prefixes = ['Khtml','Moz','Webkit','O','ms'], 
+		var i = prefixes.length,
 			upper = prop.charAt(0).toUpperCase() + prop.slice(1); 
+			
+		//check for standard prop first
+		if(prop in div.style) return prop;
 		
-		for(i = prefixes.length; i--;) if(prefixes[i] + upper in div.style) return prefixes[i] + upper; 
+		while(i--) if(prefixes[i] + upper in div.style) return prefixes[i] + upper; 
 				
-		return div.style[prop] != null ? prop : null
+		return prop;
 	}
 			
 	scale = getPrefix('transform');
@@ -43,7 +48,7 @@ provides: [Carousel.plugins.Rotate3D]
 	
 	div = null;
 					
-	Carousel.prototype.plugins.Rotate3D = new Class({
+	context.Carousel.prototype.plugins.Rotate3D = new Class({
     
 		Implements: Events,
 		
@@ -84,7 +89,7 @@ provides: [Carousel.plugins.Rotate3D]
 
 		initialize: function (elements, options, carousel) {
 
-			this.container = $(options.container).
+			this.container = document.id(options.container).
 				//brings an element to the front
 				addEvent('click', function (e) {
 		
@@ -100,7 +105,7 @@ provides: [Carousel.plugins.Rotate3D]
 					if(element && element != this.current) {
 					
 						e.stop();
-						carousel.move(index); return
+						carousel.move(index)
 					}
 					
 				}.bind(this));
@@ -229,4 +234,4 @@ provides: [Carousel.plugins.Rotate3D]
 		}
 	})
 	
-}(document.id);
+}(this);

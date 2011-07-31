@@ -17,7 +17,9 @@ provides: [Carousel, Carousel.plugins.Move]
 ...
 */
 
-!function ($) {
+!function (context, $, undefined) {
+
+"use strict";
 
 function style(el, style) {
 
@@ -26,7 +28,7 @@ function style(el, style) {
 	return mrg == 'auto' ? 0 : mrg.toInt() 
 }
 
-var Carousel = this.Carousel = new Class({
+context.Carousel = new Class({
 
 		Implements: [Options, Events],
 		options: {
@@ -111,14 +113,14 @@ var Carousel = this.Carousel = new Class({
 			this.tabs = $$(options.tabs).addEvents(events);
 			this.elements = $(options.container).getChildren(options.selector);
 			
-			this.anim = new this.plugins[this.options.animation](this.elements, this.options, this).addEvents({change: function () { this.fireEvent('change', arguments) }.bind(this), complete: function () { this.fireEvent('complete', arguments) }.bind(this)});
+			this.anim = new this.plugins[this.options.animation](this.elements, this.options, this).addEvents({change: function () { this.fireEvent('change', Array.slice(arguments)) }.bind(this), complete: function () { this.fireEvent('complete', Array.slice(arguments)) }.bind(this)});
 			
 			this.move(current || 0);
 		},
 		
 		isVisible: function (index) {
 		
-			if(typeOf($(index)) == 'element') index = this.elements.indexOf($(index));
+			if(Type.isElement(index)) index = this.elements.indexOf($(index));
 			
 			var length = this.elements.length,
 				current = this.current,
@@ -256,7 +258,7 @@ var Carousel = this.Carousel = new Class({
 		}
 	});
 	
-	Carousel.prototype.plugins.Move = new Class({
+context.Carousel.prototype.plugins.Move = new Class({
 	
 		Implements: Events,
 		initialize: function (elements, options) {
@@ -334,18 +336,21 @@ var Carousel = this.Carousel = new Class({
 				panels = this.elements,
 				panel,
 				prev,
-				ini = pos = this.padding,
+				pos,
+				ini,
 				pad = this.pad,
-				i,
 				index,
 				length = panels.length,
+				i = length + 1,
 				horizontal = options.mode == 'horizontal',
 				side = horizontal ? 'offsetWidth' : 'offsetHeight';
-								
+			
+			ini = pos = this.padding;
+			
 			//rtl
 			if(direction == -1) {
 			
-				for(i = length; i > options.scroll - 1; i--) {
+				while(i > options.scroll - 1 && i--) {
 			
 					index = (i + offset + length) % length;
 					prev = panel;
@@ -405,4 +410,4 @@ var Carousel = this.Carousel = new Class({
 		}
 	})
 	
-}(document.id);
+}(this, document.id);

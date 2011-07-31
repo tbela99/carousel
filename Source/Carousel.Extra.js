@@ -17,7 +17,11 @@ provides: [Carousel]
 ...
 */
 
-Carousel.Extra = new Class({
+!function (context) {
+
+"use strict";
+
+context.Carousel.Extra = new Class({
 
 	/*
 	
@@ -30,11 +34,12 @@ Carousel.Extra = new Class({
 		},
 		*/
 	
-		Extends: Carousel,
+		Extends: context.Carousel,
 		Binds: ['update', 'start', 'stop'],
 		initialize: function(options) {
 
-			this.parent(Object.merge({interval: 10, delay: 10, autostart: true}, options));
+			this.parent(Object.append({interval: 10, delay: 10, autostart: true}, options));
+			
 			var active,
 				events = this.events = {
 
@@ -110,5 +115,7 @@ Carousel.Extra = new Class({
 			return this[this.active ? 'stop' : 'start']()
 		}
 
-	});
+	})
+
+}(this);
 		
