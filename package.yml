@@ -4,3 +4,7 @@ category: Interface
 tags: [animation, carousel, 3D]
 demo: http://tbela99.github.com/carousel/Demos/horizontal.html
 current: 0.2.4.1
+sources:
+  - "Source/Carousel.js"
+  - "Source/Carousel.Extra.js"
+  - "Source/Carousel.Rotate3D.js"
