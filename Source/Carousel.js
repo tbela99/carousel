@@ -127,7 +127,7 @@ context.Carousel = new Class({
 				scroll = this.options.scroll;
 			
 			if(current <= index && index < current + scroll) return true;
-			if(this.options.circular)  while(scroll && --scroll) if((scroll + current)  % length == index) return true;
+			if(this.options.circular)  while(scroll--) if((scroll + current)  % length == index) return true;
 			
 			return false
 		},
@@ -229,7 +229,7 @@ context.Carousel = new Class({
 				length = elements.length,
 				scroll = this.options.scroll;
 			
-			if(typeOf($(index)) == 'element') index = elements.indexOf(index);
+			if(Type.isElement(index)) index = elements.indexOf(index);
 			
 			if(!this.options.circular) {
 		
