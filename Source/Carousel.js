@@ -17,7 +17,7 @@ provides: [Carousel, Carousel.plugins.Move]
 ...
 */
 
-!function ($) {
+(function ($) {
 
 function style(el, style) {
 
@@ -405,4 +405,4 @@ var Carousel = this.Carousel = new Class({
 		}
 	})
 	
-}(document.id);
+})(document.id);
