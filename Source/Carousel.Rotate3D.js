@@ -18,7 +18,7 @@ provides: [Carousel.plugins.Rotate3D]
 ...
 */
 
-!function (context) {
+!function (context, undefined) {
 
 "use strict";
 
@@ -46,7 +46,7 @@ provides: [Carousel.plugins.Rotate3D]
 		
 	if(scale) Carousel.scale = scale;
 	
-	div = null;
+	div = undefined;
 					
 	context.Carousel.prototype.plugins.Rotate3D = new Class({
     

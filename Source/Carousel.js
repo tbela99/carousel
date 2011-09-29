@@ -13,6 +13,7 @@ requires:
   - Element.Style
   - Element.Dimensions
   - Array
+  - Type
 provides: [Carousel, Carousel.plugins.Move]
 ...
 */
@@ -40,7 +41,7 @@ context.Carousel = new Class({
 			},
 			previous: element1,
 			next: element2,
-			container: null,
+			container: undefined,
 			selector: '',
 			tabs: [],
 		*/
@@ -184,7 +185,7 @@ context.Carousel = new Class({
 				tab = this.tabs[index];
 				
 			//
-			if(panel == undefined) return null;
+			if(panel == undefined) return undefined;
 
 			this.elements.splice(index, 1);
 			panel.dispose();
@@ -232,19 +233,21 @@ context.Carousel = new Class({
 			if(Type.isElement(index)) index = elements.indexOf(index);
 			
 			if(!this.options.circular) {
-		
-				if(index > length - scroll) index = length - scroll
+		        
+				if(index > length - scroll) index = length - scroll;
+                index = Math.max(index, 0);
 			}	
 				
 			else {
-			
+			    
 				if(index < 0) index += length;
 				index %= Math.max(length, 1)
+                
 			}			
 		
 			if(index < 0 || length <= scroll || index >= length) return this;
 
-			if(direction == null) {
+			if(direction == undefined) {
 				
 				//detect direction. inspired by moostack
 				var forward = current < index ? index - current : elements.length - current + index,
