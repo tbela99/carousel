@@ -17,7 +17,7 @@ provides: [Carousel, Carousel.plugins.Move]
 ...
 */
 
-!function ($) {
+(function ($) {
 
 function style(el, style) {
 
@@ -230,14 +230,17 @@ var Carousel = this.Carousel = new Class({
 			if(typeOf($(index)) == 'element') index = elements.indexOf(index);
 			
 			if(!this.options.circular) {
-		
-				if(index > length - scroll) index = length - scroll
+		        
+				if(index > length - scroll) index = length - scroll;
+                index = Math.max(index, 0);
+                
 			}	
 				
 			else {
-			
+			    
 				if(index < 0) index += length;
 				index %= Math.max(length, 1)
+                
 			}			
 		
 			if(index < 0 || length <= scroll || index >= length) return this;
@@ -405,4 +408,4 @@ var Carousel = this.Carousel = new Class({
 		}
 	})
 	
-}(document.id);
+})(document.id);

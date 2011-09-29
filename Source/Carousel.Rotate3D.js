@@ -18,7 +18,7 @@ provides: [Carousel.plugins.Rotate3D]
 ...
 */
 
-!function ($) {
+(function ($) {
 
 	var key = 'cr:3d',
 		div = document.createElement('div'),
@@ -229,4 +229,4 @@ provides: [Carousel.plugins.Rotate3D]
 		}
 	})
 	
-}(document.id);
+})(document.id);
