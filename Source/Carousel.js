@@ -47,7 +47,7 @@ context.Carousel = new Class({
 		*/
 			activeClass: '',
 			inactiveClass: '',
-			link: 'cancel',
+			link: 'ignore',
 			mode: 'horizontal',
 			animation: 'Move',
 			scroll: 4,
@@ -64,29 +64,36 @@ context.Carousel = new Class({
 		initialize: function (options) {
 		
 			this.addEvents({
-				change: function (current) { 
-				
+			
+				change: function (current) {
+
 					if(this.tabs[this.current]) this.tabs[this.current].addClass(this.options.inactiveClass).removeClass(this.options.activeClass)
 					if(this.tabs[current]) this.tabs[current].addClass(this.options.activeClass).removeClass(this.options.inactiveClass);
-					
+
 				},
-				complete: function (current, selected) { 
-				
+				complete: function (current, selected) {
+
 					this.current = current;
 					this.selected = selected
-					this.running = false 
+					this.running = false
 				}
+				
 			}).setOptions(options);
-			
+
 			['previous', 'next'].each(function (fn) {
-				
-				if($(this.options[fn])) $(this.options[fn]).addEvent('click', function (e) {
-				
-					e.stop();
-					this[fn]()
+
+				if(this.options[fn] != undefined) {
 					
-				}.bind(this))
-				
+					var el = $(this.options[fn]);
+					
+					if(el) el.addEvent('click', function (e) {
+					
+						e.stop();
+						this[fn]()
+						
+					}.bind(this))
+				}
+					
 			}, this);
 			
 			var current = options.current || 0,
@@ -114,9 +121,9 @@ context.Carousel = new Class({
 			this.tabs = $$(options.tabs).addEvents(events);
 			this.elements = $(options.container).getChildren(options.selector);
 			
-			this.anim = new this.plugins[this.options.animation](this.elements, this.options, this).addEvents({change: function () { this.fireEvent('change', Array.slice(arguments)) }.bind(this), complete: function () { this.fireEvent('complete', Array.slice(arguments)) }.bind(this)});
+			this.anim = new this.plugins[this.options.animation](this.elements, this.options, this).addEvents({change: function () { this.fireEvent('change', Array.slice(arguments)) }.bind(this), complete: function () { this.running = false; this.fireEvent('complete', Array.slice(arguments)) }.bind(this)});
 			
-			this.move(current || 0);
+			this.move(current);
 		},
 		
 		isVisible: function (index) {
@@ -144,7 +151,7 @@ context.Carousel = new Class({
 			panel = $(panel);
 			tab = $(tab);
 
-			if(tab) tab.addEvents(this.events);
+			if(tab) tab.addEvents(this.events).removeClass(this.options.activeClass);
 
 			if(this.elements.indexOf(panel) != -1) return this;
 
@@ -242,7 +249,6 @@ context.Carousel = new Class({
 			    
 				if(index < 0) index += length;
 				index %= Math.max(length, 1)
-                
 			}			
 		
 			if(index < 0 || length <= scroll || index >= length) return this;
@@ -256,6 +262,7 @@ context.Carousel = new Class({
 				direction = Math.abs(forward) <= Math.abs(backward) ? 1 : -1
 			}	
 			
+			this.running = true;
 			this.anim.move(index, direction);
 			return this
 		}
@@ -264,6 +271,7 @@ context.Carousel = new Class({
 context.Carousel.prototype.plugins.Move = new Class({
 	
 		Implements: Events,
+		index: 0,
 		initialize: function (elements, options) {
 		
 			var up = this.up = options.mode == 'vertical',
@@ -302,7 +310,7 @@ context.Carousel.prototype.plugins.Move = new Class({
 			
 			}.bind(this)});
 			
-			this.reorder(this.elements.indexOf(this.current), this.direction);
+			this.reorder(this.index, this.direction);
 			
 			return this
 		},
@@ -322,10 +330,7 @@ context.Carousel.prototype.plugins.Move = new Class({
 			return this
 		},
 		
-		add: function (el) { 
-		
-			this.addElement(el).reset() 
-		},
+		add: function (el) { this.addElement(el).reset() },
 		
 		remove: function () { 
 		
@@ -343,6 +348,7 @@ context.Carousel.prototype.plugins.Move = new Class({
 				ini,
 				pad = this.pad,
 				index,
+				current = this.index,
 				length = panels.length,
 				i = length + 1,
 				horizontal = options.mode == 'horizontal',
@@ -350,12 +356,16 @@ context.Carousel.prototype.plugins.Move = new Class({
 			
 			ini = pos = this.padding;
 			
-			//rtl
+			//rtl - consider scroll
 			if(direction == -1) {
 			
-				while(i > options.scroll - 1 && i--) {
+				i = current + 1;
+				if(current < offset) i += length;
+				
+				while(i-- > offset) {
 			
-					index = (i + offset + length) % length;
+					index = (i + length) % length;
+					
 					prev = panel;
 					panel = panels[index];
 					
@@ -366,25 +376,10 @@ context.Carousel.prototype.plugins.Move = new Class({
 					pos -= (panel[side] + style(panel, this.margin[1]));
 				}
 				
-				pos = ini + panel[side] + style(panel, this.margin[0]);
-				
-				for(i = 1; i < options.scroll; i++) {
-			
-					index = (i + offset + length) % length;
-					
-					prev = panel;
-					panel = panels[index];			
-					
-					if(prev) pos += style(prev, this.margin[1]);
-					if(horizontal) panel.setStyle('left', pos);
-					else panel.setStyles({left: pad, top: pos});
-					pos += panel[side] + style(panel, this.margin[0]);		
-				}
-				
 				//ltr
 			} else if(direction == 1) for(i = 0; i < length; i++) {
 			
-				index = (i + offset + length) % length;
+				index = (i + current + length) % length;
 				prev = panel;
 				panel = panels[index];				
 				
@@ -403,8 +398,8 @@ context.Carousel.prototype.plugins.Move = new Class({
 				property = this.property,
 				offset,
 				element = this.elements[current];
-					
-			if(this.options.circular) this.reorder(this.elements.indexOf(this.current), direction);
+				
+			if(this.options.circular) this.reorder(current, direction);
 			
 			this.index = current;
 			this.direction = direction;

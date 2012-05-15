@@ -2,192 +2,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Carousel demo</title>
+<link type="text/css" rel="stylesheet" href="carousel.css" />
 <style type="text/css">
-html {
 
-	font-family:Arial, Helvetica, sans-serif;
-	color: #333;
-	font-size:1.2em;
-}
-body {
+#slide>div>a {
 
-	font-size: 75%;
-	line-height:19px;
-}
-.hidden {
-
-	display:none;
-}
-.slide {
-	
-	width: 810px;
-	margin: 10px auto;
-}	
-.help {
-	font-size: 90%;
-	color: #111;
-	margin: 10px 0;
-}	
-a {
-
-	text-decoration: none;
-	color:#069;
-}
-img {
-
-	border: 0;
-}
-div.tabs {
-
-	text-align: center;
-}
-div.tabs a {
-
-	margin: 0 3px 0 0;
-}
-div.tabs a.selected {
-
-	text-decoration: underline;
-}
-
-/*
-
-*/
-#slide {
-
-	position: relative;
+	display: block;
 	height: 300px;
-	width: 815px;
-	background: #ccc;
-	padding: 5px 0;
-	overflow: hidden;
+}
+#slide>div {
+
+	height: 300px;
 }
 #slide div {
 
-	position: relative;
-	display: inline-block;
-	width: 400px;
-	height: 300px;
-	overflow: hidden;
-	margin-left: 5px;
+	margin-top: 5px;
+	margin-left: 0;
 }
-#slide span {
-
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	padding: 10px;
-	width: 380px;
-	color: #fff;
-	background: url(../Assets/images/grey.png);
-	background: rgba(0, 0, 0, .7)
-}
-
+#slide div div { margin: 0}
 </style>
-<script type="text/javascript" src="../mootools.js"></script>
-<script type="text/javascript" src="../Reflection.js"></script>
-<script type="text/javascript" src="../PeriodicalExecuter.js"></script>
-
-<script type="text/javascript" src="../Source/Carousel.js"></script>
-<script type="text/javascript" src="../Source/Carousel.Rotate3D.js"></script>
-<script type="text/javascript" src="../Source/Carousel.Extra.js"></script>
-
-<script type="text/javascript">
-//<![CDATA[
-
-	var carousel;
-	
-	window.addEvent('domready', function () {
-	
-		var duration = 300,
-		
-			div = document.getElement('div.tabs');
-			links = div.getElements('a');
-			
-			carousel = new Carousel.Extra({
-				activeClass: 'selected',
-				container: 'slide',
-				scroll: 1,
-				distance: 1,
-				circular: true,
-				current: 3,
-				animation: 'Rotate3D',
-				previous: links.shift(),
-				next: links.pop(),
-				tabs: links,
-				min: Carousel.scale ? .1 : .4,
-				yRadius: Carousel.scale ? 10 : 50,
-				margin: Carousel.scale ? 25 : 0,
-				offsetAngle: Carousel.scale ? -195 : 0,
-				centerOffset: {
-				
-					x: Carousel.scale ? -100 : 0,
-					y: 0
-				},
-				/* mode: 'horizontal', */
-				fx: {
-				
-					duration: duration
-				}
-			}),
-			removed = 0;
-			
-		function change() {
-		
-			var panel = this.retrieve('panel');
-			
-			if(this.checked) {
-				
-				if(!panel) {
-				
-					if(carousel.running) {
-					
-						carousel.addEvent('complete:once', change.bind(this));
-						return
-					}
-					
-					panel = carousel.remove(Math.max(0, this.value - removed));
-					
-					if(panel) {
-					
-						this.store('panel', panel);
-						removed++;
-					}
-					
-					this.checked = !!panel
-				}
-				
-			} else {
-			
-				if(panel) {
-				
-					this.eliminate('panel');
-					removed--;
-					carousel.add(panel.panel, panel.tab.inject(div.getFirst(), 'after'), this.value)
-				}
-			}
-		}
-		
-		$$('input.remove').addEvents({click: change, change: change})
-	}).
-	//add image reflection
-	addEvent('load', function () {
-	
-		//add reflection only if the container can be scaled otherwise the content will flood out of the container
-		if(!Carousel.scale) return;
-		
-		var images = new Elements(document.images),
-			ie8 = Browser.ie && Browser.version < 9;
-		
-		images.each(function (img) {
-		
-			document.id(img.parentNode).setStyles({left: ie8 ? 0 : -5, position: 'absolute'});
-			document.id(img.parentNode.parentNode).setStyles({maxWidth: 400, overflow: 'visible'});
-			
-			Reflection.add(img);
-		})
-	})
-//]]></script>
 </head><body>
 <div class="slide">
  <div id="slide">
@@ -202,7 +35,7 @@ div.tabs a.selected {
         <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide9.jpg" width="400" height="300" /></a><span>Caption 9: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide10.jpg" width="400" height="300" /></a><span>Caption 10: put anything you want in the caption. Note that there is a link in the image</span></div>
   </div>
-  <div class="tabs"><a href="#page-p">&laquo;</a><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a><a href="#5">6</a><a href="#6">7</a><a href="#7">8</a><a href="#8">9</a><a href="#9">10</a><a href="#page-p">&raquo;</a></div>
+  <div class="tabs"><span id="toggle">Stop</span><a href="#page-p">&laquo;</a><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a><a href="#5">6</a><a href="#6">7</a><a href="#7">8</a><a href="#8">9</a><a href="#9">10</a><a href="#page-p">&raquo;</a></div>
 	
 	<div>Carousel demo.</div>
 	<form action="">
@@ -221,4 +54,55 @@ div.tabs a.selected {
   <div>Feel free to use and/or modify.</div>  
       <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
 </div>
+<script type="text/javascript" src="../mootools.js"></script>
+<script type="text/javascript" src="../Reflection.js"></script>
+<script type="text/javascript" src="../PeriodicalExecuter.js"></script>
+
+<script type="text/javascript" src="../Source/Carousel.js"></script>
+<script type="text/javascript" src="../Source/Carousel.Rotate3D.js"></script>
+<script type="text/javascript" src="../Source/Carousel.Extra.js"></script>
+
+
+<!-- demo -->
+<script type="text/javascript" src="carousel.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+
+	window.addEvent('domready', function () {
+	
+		init({
+	
+				animation: 'Rotate3D',
+				min: Carousel.scale ? .1 : .4,
+				yRadius: Carousel.scale ? 10 : 50,
+				margin: Carousel.scale ? 25 : 0,
+				offsetAngle: Carousel.scale ? -195 : 0,
+				centerOffset: {
+				
+					x: Carousel.scale ? -100 : 0,
+					y: 0
+				}
+			})
+		}
+	)/* .
+	//add image reflection
+	addEvent('load', function () {
+	
+		//add reflection only if the container can be scaled otherwise the content will flood out of the container
+		if(!Carousel.scale) return;
+		
+		var images = new Elements(document.images),
+			ie8 = Browser.ie && Browser.version < 9;
+		
+		images.each(function (img) {
+		
+			document.id(img.parentNode).setStyles({left: ie8 ? 0 : -5, position: 'absolute'});
+			
+			document.id(img.parentNode.parentNode).setStyles({maxWidth: 400, overflow: 'visible'});
+			
+			Reflection.add(img);
+		})
+	}) */
+//]]></script>
 </body></html>

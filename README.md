@@ -114,20 +114,20 @@ It is quite simple to use. a new class *Carousel.Extra* has been added. it allow
 ### Options:
 
 * container  - (*mixed*) the element that contains the panels.
+* previous - (*mixed*, optional) element that moves carousel to the left when clicked.
+* next - (*mixed*, optional) element that moves carousel to the right when clicked.
 * tabs  - (*mixed*, optional) elements associated to the carousel panels. a click on a tab makes associated panel visible.
 * selector  - (*string*, optional) use only children that match this selector. useful when you have something else in your html like arrows to move the carousel.
-* link  - (*string*, optional) indicates the way concurrent animations are handled. allowed values are *cancel* (default) cancel current animation, *ignore* ignore the new animation, *chain* run the new animation after the current is completed.
+* link  - (*string*, optional) indicates the way concurrent animations are handled. allowed values are *ignore* (default) ignore the new animation, *cancel* cancel current animation, *chain* run the new animation after the current is completed.
 * activeClass  - (*string*, optional) css class od the active tab.
 * inactiveClass  - (*mixed*, optional) css class of inactive tab.
 * circular: (*boolean*, optional) determines how the carousel behaves when it reaches the bounds.
-* previous - (*mixed*, optional) element that moves carousel to the left when clicked.
-* next - (*mixed*, optional) element that moves carousel to the right when clicked.
 * mode - (*string*, optional) the carousel mode. allowed values are *vertical* and *horizontal*
 * scroll - (*int*, optional) the number of items visible in the carousel, this must be set using css. the carousel will not attempt to resize the container to fit this number.
+* distance - (*int*, optional) the number of images to cycle through each time next/previous are called .... defaults to 4.
 * animation  - (*string*, optional) the transition plugin to use for transition. default to *Move*. possible values are *Move* and *Rotate3D*
 * fx - (*object*, optional) parameters for the animation. this can be any of the Fx parameters.
 * current  - (*int*, optional) index of the first displayed item. default to 0.
-* distance - (*int*, optional) the number of images to cycle through each time next/previous are called .... defaults to 1.
 
 ### Additional options for Rotate3D effect:
 
@@ -142,9 +142,10 @@ It is quite simple to use. a new class *Carousel.Extra* has been added. it allow
 ### Carousel.Extra Options:
 these options are specific to Carousel.Extra
 
+* toggle - (*mixed*) element that toggles automatic slide when clicked
 * interval  - (*int*) interval between 2 animations in seconds.
 * delay - (*int*) delay between the moment the next/previous button is clicked and the auto slide is restarted.
-* autostart  - (*boolean*) automatically start slide after the carousel is created.
+* autostart  - (*boolean*) automatically start slide immediately after the carousel is created. default to false.
 * reverse - (*boolean*) run the carousel in reverse order.
 
 ### Events:
@@ -171,7 +172,7 @@ add an element to the carousel.
 
 - panel - (*mixed*) element to add.
 - tab - (*mixed*, optional) tab associated to the element.
-- index - (*int*, optional) position where the tab will be inserted.
+- index - (*int*, optional) position where the tab will be inserted. if not secified, the element will be inserted at the end.
 
 ### Returns:
 
@@ -180,7 +181,7 @@ add an element to the carousel.
 Method: remove 
 ------------
 
-remove element at given index from the carousel. you cannot remove an element while an animation is running. you cannot remove the current element
+remove element at given index from the carousel.
 
 ### Arguments:
 
@@ -188,7 +189,7 @@ remove element at given index from the carousel. you cannot remove an element wh
 
 ### Returns:
 
-* (*object*) - object containing the element and its tab {panel: panel, tab: tab}.
+* (*object*) - object containing the element and its associated tab {panel: panel, tab: tab}.
 
 Method: next 
 ------------

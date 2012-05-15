@@ -25,7 +25,7 @@ provides: [Carousel.plugins.Rotate3D]
 	var key = 'cr:3d',
 		div = document.createElement('div'),
 		scale,
-			prefixes = ['Moz','Webkit','O','ms','Khtml'], 
+		prefixes = ['Khtml','O','ms','Moz','Webkit'], 
 		transition;
 		
 	function getPrefix(prop) {
@@ -110,7 +110,7 @@ provides: [Carousel.plugins.Rotate3D]
 					
 				}.bind(this));
 				
-			this.options = Object.merge(this.options, options);
+			this.options = Object.append(this.options, options);
 			this.elements = elements;
 			this.current = elements[0];
 			
@@ -217,7 +217,7 @@ provides: [Carousel.plugins.Rotate3D]
 					};
 					
 			if(scale) styles[scale] = 'scale(' + sCoeff + ',' + sCoeff + ')';
-			else Object.merge(styles, {overflow: 'hidden', height: size.y * sCoeff, width: width })
+			else Object.append(styles, {overflow: 'hidden', height: size.y * sCoeff, width: width })
 			
 			return styles
 		},
